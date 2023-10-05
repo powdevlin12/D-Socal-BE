@@ -42,9 +42,12 @@ export default class DatabaseConnect {
       await this.client.db(process.env.DB_DATABASE).command({ ping: 1 })
       console.log('Pinged your deployment. You successfully connected to MongoDB!')
       // Ensures that the client will close when you finish/error
-    } finally {
-      await this.client.close()
+    } catch (err) {
+      console.log('🚀 ~ file: database.service.ts:46 ~ DatabaseConnect ~ connect ~ err:', err)
     }
+    // finally {
+    //   await this.client.close()
+    // }
   }
 
   get users(): Collection<User> {
