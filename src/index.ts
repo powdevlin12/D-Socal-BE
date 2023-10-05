@@ -1,16 +1,19 @@
 import express, { Request, Response } from 'express'
 import userRouter from './routes/users.router'
-import { run } from './services/database.service'
+import { instanceDatabase } from './services/database.service'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const app = express()
-const port = 3000
+const port = process.env.PORT_SERVER || 3000
 
 // middlewares
 app.use(express.json())
 // routes
 app.use('/users', userRouter)
 // database
-run().catch(console.dir)
+// run().catch(console.dir)
+instanceDatabase()
 // Định nghĩa các route và xử lý các yêu cầu
 app.get('/', (req: Request, res: Response) => {
   res.send('Chào mừng đến với Express.js server!')
