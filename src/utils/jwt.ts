@@ -1,14 +1,16 @@
 import { KeyObject } from 'crypto'
 import jwt, { SignOptions } from 'jsonwebtoken'
 
-const signToken = ({
+export const signToken = ({
   payload,
   privateKey = process.env.JWT_SECRET as string,
-  options
+  options = {
+    algorithm: 'HS256'
+  }
 }: {
   payload: string | Buffer | object
-  privateKey: string | Buffer | KeyObject | { key: string | Buffer; passphrase: string }
-  options: SignOptions
+  privateKey?: string | Buffer | KeyObject | { key: string | Buffer; passphrase: string }
+  options?: SignOptions
 }) =>
   new Promise<string>((resolve, reject) =>
     jwt.sign(payload, privateKey, options, (err, token) => {
