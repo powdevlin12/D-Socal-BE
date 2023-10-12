@@ -19,7 +19,11 @@ export const loginController = (req: Request, res: Response) => {
   }
 }
 
-export const registerController = async (req: Request<ParamsDictionary, any, RegisterRequestBody>, res: Response) => {
+export const registerController = async (
+  req: Request<ParamsDictionary, any, RegisterRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await userService.register(req.body)
     if (result) {
@@ -29,10 +33,7 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
       })
     }
   } catch (error) {
-    console.log('🚀 ~ file: users.controller.ts:35 ~ registerController ~ error:', error)
-    return res.status(500).json({
-      error
-    })
+    next(error)
   }
 }
 
