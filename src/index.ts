@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import userRouter from './routes/users.router'
 import { instanceDatabase } from './services/database.service'
 import dotenv from 'dotenv'
@@ -14,9 +14,12 @@ app.use('/users', userRouter)
 // database
 // run().catch(console.dir)
 instanceDatabase()
-// Định nghĩa các route và xử lý các yêu cầu
-app.get('/', (req: Request, res: Response) => {
-  res.send('Chào mừng đến với Express.js server!')
+
+// default handlers
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  return res.status(500).json({
+    message: err.message
+  })
 })
 
 // Khởi động server
