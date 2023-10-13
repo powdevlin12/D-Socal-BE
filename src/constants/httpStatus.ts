@@ -1,4 +1,4 @@
-const httpStatus = {
+const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
   ACCEPTED: 202,
@@ -7,6 +7,6 @@ const httpStatus = {
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500
-}
+} as const
 
-export default httpStatus
+export default HTTP_STATUS
