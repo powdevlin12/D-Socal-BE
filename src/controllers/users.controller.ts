@@ -1,22 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
-import { Result, ValidationError, matchedData, validationResult } from 'express-validator'
+import { matchedData, validationResult } from 'express-validator'
 import User from '~/models/schemas/User.schema'
-import { instanceDatabase } from '~/services/database.service'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
 
-export const loginController = (req: Request, res: Response) => {
-  const { email, password } = req.body
-  if (email === 'trandat' && password === '123') {
-    return res.status(200).json({
-      message: 'Login successful'
-    })
-  } else {
-    return res.status(400).json({
-      message: 'Login failed'
-    })
-  }
+export const loginController = async (req: Request, res: Response) => {
+  const user = req.user as User
+  const token = await userService.login(user._id.toString())
+  return res.status(200).json({
+    message: 'Login successfully',
+    token
+  })
 }
 
 export const registerController = async (
@@ -24,16 +19,12 @@ export const registerController = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const result = await userService.register(req.body)
-    if (result) {
-      return res.status(200).json({
-        message: 'Created successfully',
-        result
-      })
-    }
-  } catch (error) {
-    next(error)
+  const result = await userService.register(req.body)
+  if (result) {
+    return res.status(200).json({
+      message: 'Created successfully',
+      result
+    })
   }
 }
 

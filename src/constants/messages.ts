@@ -9,5 +9,6 @@ export const USER_MESSAGE = {
   PASSWORD_MUST_BE_STRONG: 'Password must be strong',
   PASSWORD_MUST_BE_FROM_8_TO_50: 'Password must be from 8 to 50 characters',
   PASSWORD_NOT_MATCH: 'Password not match',
-  DATE_OF_BIRTH_MUST_BE_IOS8601: 'Date of birth must be IO8601'
+  DATE_OF_BIRTH_MUST_BE_IOS8601: 'Date of birth must be IO8601',
+  USER_NOT_FOUND: 'User not found'
 } as const

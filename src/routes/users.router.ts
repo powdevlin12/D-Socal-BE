@@ -7,7 +7,7 @@ import { wrapRequestHandler } from '../utils/handlers'
 const userRouter = express.Router()
 
 userRouter
-  .post('/login', loginValidator, loginController)
+  .post('/login', validate(loginValidator), wrapRequestHandler(loginController))
   .post('/register', validate(registerValidator), wrapRequestHandler(registerController))
   .get(
     '/test',

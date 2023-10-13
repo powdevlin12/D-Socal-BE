@@ -5,17 +5,46 @@ import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import userService from '~/services/user.service'
 
-export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body
-
-  if (!email || !password) {
-    return res.status(400).json({
-      message: 'Please provide an email and password'
-    })
+export const loginValidator = checkSchema({
+  email: {
+    notEmpty: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY
+    },
+    trim: true,
+    isEmail: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID
+    },
+    custom: {
+      options: async (value: string, { req }) => {
+        const user = await userService.checkExistEmail(value)
+        if (!user) throw new Error(USER_MESSAGE.USER_NOT_FOUND)
+        req.user = user
+        return true
+      }
+    }
+  },
+  password: {
+    notEmpty: true,
+    isString: true,
+    isLength: {
+      options: {
+        min: 8,
+        max: 50
+      },
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50
+    },
+    isStrongPassword: {
+      options: {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minSymbols: 1,
+        minNumbers: 1
+      },
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG
+    }
   }
-
-  return next()
-}
+})
 
 export const registerValidator = checkSchema({
   name: {

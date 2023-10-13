@@ -8,12 +8,6 @@ type ErrorsType = Record<
     [key: string]: any
   }
 >
-//  {key : [string]:  {
-//   msg: string
-//   location: string
-//   value: any
-// path: string (req.body || req.params || ...)
-// } }
 export class ErrorWithStatus {
   message: string
   status: number

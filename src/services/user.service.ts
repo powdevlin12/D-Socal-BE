@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schema'
 import { instanceDatabase } from './database.service'
-import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
+import { LoginRequestBody, RegisterRequestBody } from '~/models/schemas/requests/User.request'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enums'
@@ -32,6 +32,10 @@ class UserService {
     })
   }
 
+  private signAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  }
+
   async register(payload: RegisterRequestBody) {
     const result = await instanceDatabase().users.insertOne(
       new User({
@@ -43,13 +47,18 @@ class UserService {
 
     const user_id = result.insertedId.toString()
 
-    const token = Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+    const token = await this.signAccessAndRefreshToken(user_id)
     return token
   }
 
   async checkExistEmail(email: string) {
     const result = await instanceDatabase().users.findOne({ email })
-    return Boolean(result)
+    return result
+  }
+
+  async login(user_id: string) {
+    const token = await this.signAccessAndRefreshToken(user_id)
+    return token
   }
 }
 
