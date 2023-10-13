@@ -1,7 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import userRouter from './routes/users.router'
 import { instanceDatabase } from './services/database.service'
 import dotenv from 'dotenv'
+import { defaultErrorHandler } from './middlewares/error.middleware'
 dotenv.config()
 
 const app = express()
@@ -16,11 +17,7 @@ app.use('/users', userRouter)
 instanceDatabase()
 
 // default handlers
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  return res.status(500).json({
-    message: err.message
-  })
-})
+app.use(defaultErrorHandler)
 
 // Khởi động server
 app.listen(port, () => {

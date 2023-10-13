@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
+import httpStatus from '~/constants/httpStatus'
+import { ErrorWithStatus } from '~/models/Errors'
 import userService from '~/services/user.service'
 
 export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
@@ -79,7 +81,7 @@ export const registerValidator = checkSchema({
     custom: {
       options: (value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error('Confirm password does not match')
+          throw new ErrorWithStatus({ message: 'Confirm password does not match', status: httpStatus.NOT_FOUND })
         }
         return true
       }
