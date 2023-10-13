@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import userService from '~/services/user.service'
 
@@ -18,37 +19,44 @@ export const loginValidator = (req: Request, res: Response, next: NextFunction) 
 
 export const registerValidator = checkSchema({
   name: {
-    notEmpty: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGE.NAME_IS_REQUESTED
+    },
     isLength: {
       options: {
-        max: 255,
+        max: 100,
         min: 10
-      }
+      },
+      errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_100
     },
     isString: true,
     trim: true
   },
   email: {
-    notEmpty: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY
+    },
     trim: true,
-    isEmail: true,
+    isEmail: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID
+    },
     custom: {
       options: async (value: string) => {
         const result = await userService.checkExistEmail(value)
-        if (result) throw new Error('Email is exist in database')
+        if (result) throw new Error(USER_MESSAGE.EMAIL_IS_ALREADY_IN_USE)
         return true
       }
     }
   },
   password: {
-    errorMessage: 'Password not strong',
     notEmpty: true,
     isString: true,
     isLength: {
       options: {
         min: 8,
         max: 50
-      }
+      },
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50
     },
     isStrongPassword: {
       options: {
@@ -57,7 +65,8 @@ export const registerValidator = checkSchema({
         minUppercase: 1,
         minSymbols: 1,
         minNumbers: 1
-      }
+      },
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG
     }
   },
   confirm_password: {
@@ -81,7 +90,7 @@ export const registerValidator = checkSchema({
     custom: {
       options: (value, { req }) => {
         if (value !== req.body.password) {
-          throw new ErrorWithStatus({ message: 'Confirm password does not match', status: HTTP_STATUS.NOT_FOUND })
+          throw new ErrorWithStatus({ message: USER_MESSAGE.PASSWORD_NOT_MATCH, status: HTTP_STATUS.NOT_FOUND })
         }
         return true
       }
@@ -92,7 +101,8 @@ export const registerValidator = checkSchema({
       options: {
         strict: true,
         strictSeparator: true
-      }
+      },
+      errorMessage: USER_MESSAGE.DATE_OF_BIRTH_MUST_BE_IOS8601
     }
   }
 })
