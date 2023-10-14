@@ -13,5 +13,7 @@ export const USER_MESSAGE = {
   USER_NOT_FOUND: 'User not found',
   LOGIN_SUCCESS: 'Login success',
   REGISTERE_SUCCESS: 'Register success',
-  EMAIL_OR_PASSWORD_INCORRECT: 'Email or password incorrect'
+  EMAIL_OR_PASSWORD_INCORRECT: 'Email or password incorrect',
+  ACCCESS_TOKEN_IS_REQUESTED: 'access token is requested',
+  ACCESS_TOKEN_INVALID: 'Access token is invalid'
 } as const

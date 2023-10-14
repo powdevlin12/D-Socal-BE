@@ -1,6 +1,8 @@
 import { KeyObject } from 'crypto'
 import { config } from 'dotenv'
 import jwt, { SignOptions } from 'jsonwebtoken'
+import { ErrorWithStatus } from '../models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
 config()
 
 export const signToken = ({
@@ -23,3 +25,24 @@ export const signToken = ({
       resolve(token as string)
     })
   )
+
+export const verifyToken = ({
+  accessToken,
+  privateKey = process.env.JWT_SECRET as string
+}: {
+  accessToken: string
+  privateKey?: string
+}) =>
+  new Promise((resolve, reject) => {
+    jwt.verify(accessToken, privateKey, function (err, decoded) {
+      if (err) {
+        throw reject(
+          new ErrorWithStatus({
+            message: err.message,
+            status: HTTP_STATUS.UNAUTHORIZED
+          })
+        )
+      }
+      resolve(decoded)
+    })
+  })
