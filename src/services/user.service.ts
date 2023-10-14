@@ -1,9 +1,13 @@
 import User from '~/models/schemas/User.schema'
 import { instanceDatabase } from './database.service'
-import { LoginRequestBody, RegisterRequestBody } from '~/models/schemas/requests/User.request'
+import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enums'
+import refreshTokenService from './refreshToken.service'
+import { ObjectId } from 'mongodb'
+import { config } from 'dotenv'
+config()
 
 class UserService {
   private signAccessToken(user_id: string) {
@@ -48,6 +52,12 @@ class UserService {
     const user_id = result.insertedId.toString()
 
     const token = await this.signAccessAndRefreshToken(user_id)
+
+    await refreshTokenService.createRefeshToken({
+      user_id: new ObjectId(user_id),
+      token: token[1]
+    })
+
     return token
   }
 
@@ -58,6 +68,10 @@ class UserService {
 
   async login(user_id: string) {
     const token = await this.signAccessAndRefreshToken(user_id)
+    await refreshTokenService.createRefeshToken({
+      user_id: new ObjectId(user_id),
+      token: token[1]
+    })
     return token
   }
 }

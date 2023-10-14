@@ -4,12 +4,13 @@ import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
+import { USER_MESSAGE } from '~/constants/messages'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
   const token = await userService.login(user._id.toString())
   return res.status(200).json({
-    message: 'Login successfully',
+    message: USER_MESSAGE.LOGIN_SUCCESS,
     token
   })
 }
@@ -22,7 +23,7 @@ export const registerController = async (
   const result = await userService.register(req.body)
   if (result) {
     return res.status(200).json({
-      message: 'Created successfully',
+      message: USER_MESSAGE.REGISTERE_SUCCESS,
       result
     })
   }

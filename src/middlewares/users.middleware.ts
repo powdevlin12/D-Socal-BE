@@ -3,7 +3,9 @@ import { checkSchema } from 'express-validator'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import { instanceDatabase } from '~/services/database.service'
 import userService from '~/services/user.service'
+import { hashPassword } from '~/utils/cryto'
 
 export const loginValidator = checkSchema({
   email: {
@@ -16,8 +18,11 @@ export const loginValidator = checkSchema({
     },
     custom: {
       options: async (value: string, { req }) => {
-        const user = await userService.checkExistEmail(value)
-        if (!user) throw new Error(USER_MESSAGE.USER_NOT_FOUND)
+        const user = await instanceDatabase().users.findOne({
+          email: value,
+          password: hashPassword(req.body.password)
+        })
+        if (!user) throw new Error(USER_MESSAGE.EMAIL_OR_PASSWORD_INCORRECT)
         req.user = user
         return true
       }
