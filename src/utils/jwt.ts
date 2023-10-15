@@ -27,14 +27,14 @@ export const signToken = ({
   )
 
 export const verifyToken = ({
-  accessToken,
+  token,
   privateKey = process.env.JWT_SECRET as string
 }: {
-  accessToken: string
+  token: string
   privateKey?: string
 }) =>
   new Promise((resolve, reject) => {
-    jwt.verify(accessToken, privateKey, function (err, decoded) {
+    jwt.verify(token, privateKey, function (err, decoded) {
       if (err) {
         throw reject(
           new ErrorWithStatus({

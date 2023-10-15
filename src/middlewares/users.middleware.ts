@@ -164,7 +164,7 @@ export const accessTokenValidator = checkSchema(
             })
 
           const decoded_authorization = await verifyToken({
-            accessToken
+            token: accessToken
           })
 
           req.decoded_authorization = decoded_authorization
@@ -174,4 +174,45 @@ export const accessTokenValidator = checkSchema(
     }
   },
   ['headers']
+)
+
+export const refreshTokenValidator = checkSchema(
+  {
+    refreshToken: {
+      notEmpty: {
+        errorMessage: USER_MESSAGE.REFRESH_TOKEN_IS_REQUESTED
+      },
+      isString: {
+        errorMessage: USER_MESSAGE.REFRESH_TOKEN_INVALID
+      },
+      custom: {
+        options: async (value, { req }) => {
+          try {
+            const [decoded_refresh_token, refresh_token] = await Promise.all([
+              verifyToken({ token: value }),
+              instanceDatabase().refreshTokens.findOne({
+                token: value
+              })
+            ])
+
+            if (!refresh_token) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.USED_REFRESH_TOKEN_OR_NOT_EXIST,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            req.decoded_refresh_token = decoded_refresh_token
+
+            return true
+          } catch (error) {
+            throw new ErrorWithStatus({
+              message: USER_MESSAGE.REFRESH_TOKEN_INVALID,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+        }
+      }
+    }
+  },
+  ['body']
 )
