@@ -1,6 +1,11 @@
 import express from 'express'
 import { query } from 'express-validator'
-import { loginController, registerController, testValidatorController } from '~/controllers/users.controller'
+import {
+  loginController,
+  logoutController,
+  registerController,
+  testValidatorController
+} from '~/controllers/users.controller'
 import {
   accessTokenValidator,
   loginValidator,
@@ -18,11 +23,7 @@ userRouter
     '/logout',
     validate(accessTokenValidator),
     validate(refreshTokenValidator),
-    wrapRequestHandler((req, res, next) => {
-      return res.status(200).json({
-        message: 'Logouted'
-      })
-    })
+    wrapRequestHandler(logoutController)
   )
   .get(
     '/test',

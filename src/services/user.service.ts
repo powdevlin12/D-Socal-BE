@@ -74,6 +74,16 @@ class UserService {
     })
     return token
   }
+
+  async logout(refreshToken: string) {
+    const result = await instanceDatabase().refreshTokens.deleteOne({
+      token: refreshToken
+    })
+    console.log('🚀 ~ file: user.service.ts:82 ~ UserService ~ result ~ result:', result)
+    return {
+      message: 'Logout successfully'
+    }
+  }
 }
 
 const userService = new UserService()

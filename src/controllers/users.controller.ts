@@ -5,6 +5,7 @@ import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -42,4 +43,10 @@ export const testValidatorController = (req: Request, res: Response, next: NextF
   return res.status(400).json({
     message: 'Error'
   })
+}
+
+export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+  const { refreshToken } = req.body
+  const result = await userService.logout(refreshToken)
+  return res.status(HTTP_STATUS.OK).json(result)
 }
