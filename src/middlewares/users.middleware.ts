@@ -167,7 +167,8 @@ export const accessTokenValidator = checkSchema(
               })
 
             const decoded_authorization = await verifyToken({
-              token: accessToken
+              token: accessToken,
+              privateKey: process.env.JWT_SECRET_ACCESS_TOKEN
             })
             ;(req as Request).decoded_authorization = decoded_authorization
             return true
