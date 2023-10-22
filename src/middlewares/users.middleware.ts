@@ -152,19 +152,16 @@ export const registerValidator = checkSchema(
 export const accessTokenValidator = checkSchema(
   {
     Authorization: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.ACCCESS_TOKEN_IS_REQUESTED
-      },
       custom: {
         options: async (value, { req }) => {
           try {
-            const accessToken = value.split(' ')[1]
-            console.log('🚀 ~ file: users.middleware.ts:162 ~ options: ~ accessToken:', value, accessToken)
-            if (!accessToken)
+            const accessToken = (value || '').split(' ')[1]
+            if (!accessToken) {
               throw new ErrorWithStatus({
-                message: USER_MESSAGE.ACCESS_TOKEN_INVALID,
+                message: USER_MESSAGE.ACCCESS_TOKEN_IS_REQUESTED,
                 status: HTTP_STATUS.UNAUTHORIZED
               })
+            }
 
             const decoded_authorization = await verifyToken({
               token: accessToken,
@@ -179,6 +176,7 @@ export const accessTokenValidator = checkSchema(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
+            throw error
           }
         }
       }
@@ -190,15 +188,15 @@ export const accessTokenValidator = checkSchema(
 export const refreshTokenValidator = checkSchema(
   {
     refreshToken: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.REFRESH_TOKEN_IS_REQUESTED
-      },
-      isString: {
-        errorMessage: USER_MESSAGE.REFRESH_TOKEN_INVALID
-      },
       custom: {
         options: async (value, { req }) => {
           try {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.REFRESH_TOKEN_IS_REQUESTED,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
             const [decoded_refresh_token, refresh_token] = await Promise.all([
               verifyToken({ token: value, privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
               instanceDatabase().refreshTokens.findOne({
@@ -216,7 +214,6 @@ export const refreshTokenValidator = checkSchema(
 
             return true
           } catch (error) {
-            console.log('🚀 ~ file: users.middleware.ts:209 ~ options: ~ error:', error)
             if (error instanceof JsonWebTokenError) {
               throw new ErrorWithStatus({
                 message: USER_MESSAGE.REFRESH_TOKEN_INVALID,
