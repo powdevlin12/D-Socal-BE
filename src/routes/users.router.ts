@@ -25,6 +25,7 @@ userRouter
     validate(refreshTokenValidator),
     wrapRequestHandler(logoutController)
   )
+
   .get(
     '/test',
     query('name').notEmpty().withMessage('Nhap name di'),
