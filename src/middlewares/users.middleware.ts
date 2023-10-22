@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
+import { JsonWebTokenError } from 'jsonwebtoken'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -156,19 +157,28 @@ export const accessTokenValidator = checkSchema(
       },
       custom: {
         options: async (value, { req }) => {
-          const accessToken = value.split(' ')[1]
-          if (!accessToken)
-            throw new ErrorWithStatus({
-              message: USER_MESSAGE.ACCESS_TOKEN_INVALID,
-              status: HTTP_STATUS.UNAUTHORIZED
+          try {
+            const accessToken = value.split(' ')[1]
+            console.log('🚀 ~ file: users.middleware.ts:162 ~ options: ~ accessToken:', value, accessToken)
+            if (!accessToken)
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.ACCESS_TOKEN_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+
+            const decoded_authorization = await verifyToken({
+              token: accessToken
             })
-
-          const decoded_authorization = await verifyToken({
-            token: accessToken
-          })
-
-          req.decoded_authorization = decoded_authorization
-          return true
+            ;(req as Request).decoded_authorization = decoded_authorization
+            return true
+          } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: error.message,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+          }
         }
       }
     }
@@ -201,14 +211,18 @@ export const refreshTokenValidator = checkSchema(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            req.decoded_refresh_token = decoded_refresh_token
+            ;(req as Request).decoded_refresh_token = decoded_refresh_token
 
             return true
           } catch (error) {
-            throw new ErrorWithStatus({
-              message: USER_MESSAGE.REFRESH_TOKEN_INVALID,
-              status: HTTP_STATUS.UNAUTHORIZED
-            })
+            console.log('🚀 ~ file: users.middleware.ts:209 ~ options: ~ error:', error)
+            if (error instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.REFRESH_TOKEN_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            throw error
           }
         }
       }

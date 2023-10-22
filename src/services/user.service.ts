@@ -7,6 +7,7 @@ import { TokenType } from '~/constants/enums'
 import refreshTokenService from './refreshToken.service'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
+import { USER_MESSAGE } from '~/constants/messages'
 config()
 
 class UserService {
@@ -81,7 +82,7 @@ class UserService {
     })
     console.log('🚀 ~ file: user.service.ts:82 ~ UserService ~ result ~ result:', result)
     return {
-      message: 'Logout successfully'
+      message: USER_MESSAGE.LOGOUT_SUCCESSFULLY
     }
   }
 }

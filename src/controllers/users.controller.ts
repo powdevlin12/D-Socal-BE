@@ -3,7 +3,7 @@ import { matchedData, validationResult } from 'express-validator'
 import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
+import { LogoutRequestBody, RegisterRequestBody } from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 
@@ -45,7 +45,11 @@ export const testValidatorController = (req: Request, res: Response, next: NextF
   })
 }
 
-export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+export const logoutController = async (
+  req: Request<ParamsDictionary, any, LogoutRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
   const { refreshToken } = req.body
   const result = await userService.logout(refreshToken)
   return res.status(HTTP_STATUS.OK).json(result)
