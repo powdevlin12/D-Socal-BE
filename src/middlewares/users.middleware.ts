@@ -199,7 +199,7 @@ export const refreshTokenValidator = checkSchema(
         options: async (value, { req }) => {
           try {
             const [decoded_refresh_token, refresh_token] = await Promise.all([
-              verifyToken({ token: value }),
+              verifyToken({ token: value, privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
               instanceDatabase().refreshTokens.findOne({
                 token: value
               })
@@ -211,7 +211,7 @@ export const refreshTokenValidator = checkSchema(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            ;(req as Request).decoded_refresh_token = decoded_refresh_token
+            ;(req as Request).decoded_refresh_authorization = decoded_refresh_token
 
             return true
           } catch (error) {
