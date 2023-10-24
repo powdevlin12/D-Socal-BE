@@ -3,9 +3,12 @@ import { matchedData, validationResult } from 'express-validator'
 import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { LogoutRequestBody, RegisterRequestBody } from '~/models/schemas/requests/User.request'
+import { LogoutRequestBody, RegisterRequestBody, TokenPayload } from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { instanceDatabase } from '~/services/database.service'
+import { ErrorWithStatus } from '~/models/Errors'
+import { ObjectId } from 'mongodb'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -30,18 +33,33 @@ export const registerController = async (
   }
 }
 
-export const testValidatorController = (req: Request, res: Response, next: NextFunction) => {
-  const result = validationResult(req)
-  if (result.isEmpty()) {
-    const data = matchedData(req)
-    console.log('🚀 ~ file: users.controller.ts:46 ~ testValidatorController ~ data:', data)
-    return res.status(200).json({
-      message: data.name
+export const verifyEmailController = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decoded_email_verify_token as TokenPayload
+
+  const user = await instanceDatabase().users.findOne({
+    _id: new ObjectId(user_id)
+  })
+
+  // user not found
+  if (!user) {
+    throw new ErrorWithStatus({
+      message: USER_MESSAGE.USER_NOT_FOUND,
+      status: HTTP_STATUS.NOT_FOUND
     })
   }
-  console.log(`Hello ${req.query?.name}`)
-  return res.status(400).json({
-    message: 'Error'
+
+  // token verified
+  if (user.email_verify_token === '') {
+    return res.status(200).json({
+      message: USER_MESSAGE.EMAIL_VERIFIED_BEFORE
+    })
+  }
+
+  const result = await userService.verifyEmail(user_id)
+
+  return res.status(HTTP_STATUS.OK).json({
+    result,
+    message: USER_MESSAGE.VERIFY_ACCOUNT_SUCCESS
   })
 }
 

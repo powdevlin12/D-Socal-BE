@@ -3,7 +3,7 @@ import { instanceDatabase } from './database.service'
 import { RegisterRequestBody } from '~/models/schemas/requests/User.request'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
-import { TokenType } from '~/constants/enums'
+import { TokenType, UserVerifyStatus } from '~/constants/enums'
 import refreshTokenService from './refreshToken.service'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
@@ -39,25 +39,42 @@ class UserService {
     })
   }
 
+  private signEmailVerifyToken(user_id: string) {
+    return signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.EmailVerifyToken
+      },
+      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
+      options: {
+        algorithm: 'HS256',
+        expiresIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRE_IN
+      }
+    })
+  }
+
   private signAccessAndRefreshToken(user_id: string) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 
   async register(payload: RegisterRequestBody) {
-    const result = await instanceDatabase().users.insertOne(
-      new User({
-        ...payload,
-        date_of_birth: new Date(payload.date_of_birth),
-        password: hashPassword(payload.password)
-      })
-    )
-
-    const user_id = result.insertedId.toString()
-
-    const token = await this.signAccessAndRefreshToken(user_id)
+    const user_id = new ObjectId()
+    const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
+    const [resultUpdate, token] = await Promise.all([
+      instanceDatabase().users.insertOne(
+        new User({
+          ...payload,
+          _id: user_id,
+          date_of_birth: new Date(payload.date_of_birth),
+          password: hashPassword(payload.password),
+          email_verify_token
+        })
+      ),
+      this.signAccessAndRefreshToken(user_id.toString())
+    ])
 
     await refreshTokenService.createRefeshToken({
-      user_id: new ObjectId(user_id),
+      user_id: user_id,
       token: token[1]
     })
 
@@ -85,6 +102,30 @@ class UserService {
     console.log('🚀 ~ file: user.service.ts:82 ~ UserService ~ result ~ result:', result)
     return {
       message: USER_MESSAGE.LOGOUT_SUCCESSFULLY
+    }
+  }
+
+  async verifyEmail(user_id: string) {
+    const updatedAt = new Date()
+    const [token, _] = await Promise.all([
+      this.signAccessAndRefreshToken(user_id),
+      instanceDatabase().users.updateOne(
+        {
+          _id: new ObjectId(user_id)
+        },
+        {
+          $set: {
+            email_verify_token: '',
+            verify: UserVerifyStatus.Verified,
+            updated_at: updatedAt
+          }
+        }
+      )
+    ])
+
+    return {
+      access_token: token[0],
+      refresh_token: token[1]
     }
   }
 }

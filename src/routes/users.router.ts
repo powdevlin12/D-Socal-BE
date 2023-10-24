@@ -4,10 +4,11 @@ import {
   loginController,
   logoutController,
   registerController,
-  testValidatorController
+  verifyEmailController
 } from '~/controllers/users.controller'
 import {
   accessTokenValidator,
+  emailVerifyTokenValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator
@@ -25,11 +26,6 @@ userRouter
     validate(refreshTokenValidator),
     wrapRequestHandler(logoutController)
   )
+  .post('/verify-email', validate(emailVerifyTokenValidator), wrapRequestHandler(verifyEmailController))
 
-  .get(
-    '/test',
-    query('name').notEmpty().withMessage('Nhap name di'),
-    query('age').notEmpty().withMessage('Nhap age di'),
-    testValidatorController
-  )
 export default userRouter
