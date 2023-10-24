@@ -9,6 +9,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { instanceDatabase } from '~/services/database.service'
 import { ErrorWithStatus } from '~/models/Errors'
 import { ObjectId } from 'mongodb'
+import { UserVerifyStatus } from '~/constants/enums'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -71,4 +72,27 @@ export const logoutController = async (
   const { refreshToken } = req.body
   const result = await userService.logout(refreshToken)
   return res.status(HTTP_STATUS.OK).json(result)
+}
+
+export const resendEmailVerifyToken = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+
+  const user = await instanceDatabase().users.findOne({
+    _id: new ObjectId(user_id)
+  })
+
+  if (!user) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({
+      message: USER_MESSAGE.USER_NOT_FOUND
+    })
+  }
+
+  if (user.verify === UserVerifyStatus.Verified) {
+    return res.json({
+      message: USER_MESSAGE.EMAIL_VERIFIED_BEFORE
+    })
+  }
+
+  const result = await userService.resendEmailVerifyToken(user_id)
+  return res.status(HTTP_STATUS.CREATED).json(result)
 }

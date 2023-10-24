@@ -8,6 +8,7 @@ import refreshTokenService from './refreshToken.service'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { USER_MESSAGE } from '~/constants/messages'
+import { emailVerifyTokenValidator } from '../middlewares/users.middleware'
 config()
 
 class UserService {
@@ -106,7 +107,7 @@ class UserService {
   }
 
   async verifyEmail(user_id: string) {
-    const updatedAt = new Date()
+    // const updatedAt = new Date()
     const [token, _] = await Promise.all([
       this.signAccessAndRefreshToken(user_id),
       instanceDatabase().users.updateOne(
@@ -116,8 +117,11 @@ class UserService {
         {
           $set: {
             email_verify_token: '',
-            verify: UserVerifyStatus.Verified,
-            updated_at: updatedAt
+            verify: UserVerifyStatus.Verified
+            // updated_at: updatedAt
+          },
+          $currentDate: {
+            updated_at: true
           }
         }
       )
@@ -126,6 +130,28 @@ class UserService {
     return {
       access_token: token[0],
       refresh_token: token[1]
+    }
+  }
+
+  async resendEmailVerifyToken(user_id: string) {
+    const new_email_verify_token = await this.signEmailVerifyToken(user_id)
+
+    await instanceDatabase().users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      [
+        {
+          $set: {
+            email_verify_token: new_email_verify_token,
+            updated_at: '$$NOW'
+          }
+        }
+      ]
+    )
+
+    return {
+      message: USER_MESSAGE.RESEND_EMAIL_SUCCESS
     }
   }
 }
