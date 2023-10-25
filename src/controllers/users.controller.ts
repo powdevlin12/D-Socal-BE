@@ -100,3 +100,13 @@ export const resendEmailVerifyToken = async (req: Request, res: Response, next: 
   const result = await userService.resendEmailVerifyToken(user_id)
   return res.status(HTTP_STATUS.CREATED).json(result)
 }
+
+export const forgotPasswordTokenController = async (
+  req: Request<ParamsDictionary, any, LogoutRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { _id } = req.user as User
+  const result = await userService.forgotPasswordToken(_id)
+  return res.json(result)
+}

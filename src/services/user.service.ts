@@ -58,6 +58,20 @@ class UserService {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.ForgotPasswordToken
+      },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_VERIFY_TOKEN as string,
+      options: {
+        algorithm: 'HS256',
+        expiresIn: process.env.FORGOT_PASSWORD_VERIFY_TOKEN_EXPIRE_IN
+      }
+    })
+  }
+
   async register(payload: RegisterRequestBody) {
     const user_id = new ObjectId()
     const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
@@ -152,6 +166,27 @@ class UserService {
 
     return {
       message: USER_MESSAGE.RESEND_EMAIL_SUCCESS
+    }
+  }
+
+  async forgotPasswordToken(user_id: ObjectId) {
+    const forgot_password_token = await this.signForgotPasswordToken(user_id.toString())
+    await instanceDatabase().users.updateOne(
+      {
+        _id: user_id
+      },
+      [
+        {
+          $set: {
+            forgot_password_token,
+            updated_at: '$$NOW'
+          }
+        }
+      ]
+    )
+
+    return {
+      message: USER_MESSAGE.CHECK_EMAIL_TO_RESET_PASSWORD
     }
   }
 }

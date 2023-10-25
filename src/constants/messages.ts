@@ -24,5 +24,6 @@ export const USER_MESSAGE = {
   EMAIL_VERIFIED_BEFORE: 'Email verified before',
   EMAIL_TOKEN_INVALID: 'email verify token is invalid',
   VERIFY_ACCOUNT_SUCCESS: 'Verify account success',
-  RESEND_EMAIL_SUCCESS: 'Email sent successfully'
+  RESEND_EMAIL_SUCCESS: 'Email sent successfully',
+  CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password'
 } as const

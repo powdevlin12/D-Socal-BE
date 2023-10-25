@@ -1,6 +1,6 @@
 import express from 'express'
-import { query } from 'express-validator'
 import {
+  forgotPasswordTokenController,
   loginController,
   logoutController,
   registerController,
@@ -10,6 +10,7 @@ import {
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  forgotPasswordValidate,
   loginValidator,
   refreshTokenValidator,
   registerValidator
@@ -29,5 +30,6 @@ userRouter
   )
   .post('/verify-email', validate(emailVerifyTokenValidator), wrapRequestHandler(verifyEmailController))
   .post('/resend-verify-email', validate(accessTokenValidator), wrapRequestHandler(resendEmailVerifyToken))
+  .post('/forgot-password', validate(forgotPasswordValidate), wrapRequestHandler(forgotPasswordTokenController))
 
 export default userRouter
