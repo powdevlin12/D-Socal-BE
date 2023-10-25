@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import { matchedData, validationResult } from 'express-validator'
 import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { LogoutRequestBody, RegisterRequestBody, TokenPayload } from '~/models/schemas/requests/User.request'
+import {
+  LoginRequestBody,
+  LogoutRequestBody,
+  RegisterRequestBody,
+  TokenPayload
+} from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { instanceDatabase } from '~/services/database.service'
@@ -11,7 +15,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 
-export const loginController = async (req: Request, res: Response) => {
+export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
   const token = await userService.login(user._id.toString())
   return res.status(200).json({
