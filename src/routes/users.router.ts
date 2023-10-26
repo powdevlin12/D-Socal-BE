@@ -1,6 +1,7 @@
 import express from 'express'
 import {
   forgotPasswordTokenController,
+  getMeController,
   loginController,
   logoutController,
   registerController,
@@ -41,5 +42,5 @@ userRouter
     wrapRequestHandler(verifyForgotPasswordTokenController)
   )
   .post('/reset-password', validate(resetPasswordValidator), wrapRequestHandler(resetPasswordController))
-
+  .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
 export default userRouter
