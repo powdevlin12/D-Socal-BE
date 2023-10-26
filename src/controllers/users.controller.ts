@@ -3,10 +3,12 @@ import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
 import {
+  ForgotPasswordBody,
   LoginRequestBody,
   LogoutRequestBody,
   RegisterRequestBody,
-  TokenPayload
+  TokenPayload,
+  VerifyForgotPasswordBody
 } from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -102,11 +104,21 @@ export const resendEmailVerifyToken = async (req: Request, res: Response, next: 
 }
 
 export const forgotPasswordTokenController = async (
-  req: Request<ParamsDictionary, any, LogoutRequestBody>,
+  req: Request<ParamsDictionary, any, ForgotPasswordBody>,
   res: Response,
   next: NextFunction
 ) => {
   const { _id } = req.user as User
   const result = await userService.forgotPasswordToken(_id)
   return res.json(result)
+}
+
+export const verifyForgotPasswordTokenController = async (
+  req: Request<ParamsDictionary, any, VerifyForgotPasswordBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.json({
+    message: USER_MESSAGE.VERIFY_FORGOT_PASSWORD_SUCCESS
+  })
 }

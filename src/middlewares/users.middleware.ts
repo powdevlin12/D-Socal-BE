@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -287,6 +288,59 @@ export const forgotPasswordValidate = checkSchema(
 
           ;(req as Request).user = user
           return true
+        }
+      }
+    }
+  },
+  ['body']
+)
+
+export const verifyForgotPasswordValidate = checkSchema(
+  {
+    forgot_password_token: {
+      custom: {
+        options: async (value, { req }) => {
+          if (!value) {
+            throw new ErrorWithStatus({
+              message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+          try {
+            const decoded_forgot_password_token = await verifyToken({
+              token: value,
+              privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_VERIFY_TOKEN as string
+            })
+
+            const { user_id } = decoded_forgot_password_token
+
+            const user = await instanceDatabase().users.findOne({
+              _id: new ObjectId(user_id)
+            })
+
+            if (!user) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.USER_NOT_FOUND,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+
+            if (user.forgot_password_token !== value) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            return true
+          } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGE.EMAIL_TOKEN_INVALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            throw error
+          }
         }
       }
     }
