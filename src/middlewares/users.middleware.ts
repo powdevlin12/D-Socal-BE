@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamSchema, checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -9,6 +10,7 @@ import { instanceDatabase } from '~/services/database.service'
 import userService from '~/services/user.service'
 import { hashPassword } from '~/utils/cryto'
 import { verifyToken } from '~/utils/jwt'
+import { TokenPayload } from '../models/schemas/requests/User.request'
 
 const passwordSchema: ParamSchema = {
   notEmpty: true,
@@ -361,3 +363,18 @@ export const resetPasswordValidator = checkSchema({
   confirm_password: confirmPasswordSchema,
   forgot_password_token: forgotPasswordTokenSchema
 })
+
+export const updateMeMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const { verify } = req.decoded_authorization as TokenPayload
+
+  if (verify !== UserVerifyStatus.Verified) {
+    return next(
+      new ErrorWithStatus({
+        message: USER_MESSAGE.YOU_RE_NOT_FORBIDDEN,
+        status: HTTP_STATUS.FORBIDDEN
+      })
+    )
+  }
+
+  next()
+}

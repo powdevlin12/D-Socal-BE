@@ -20,7 +20,7 @@ import { UserVerifyStatus } from '~/constants/enums'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
-  const token = await userService.login(user._id.toString())
+  const token = await userService.login(user._id.toString(), user.verify)
   return res.status(200).json({
     message: USER_MESSAGE.LOGIN_SUCCESS,
     token
@@ -143,5 +143,11 @@ export const getMeController = async (req: Request, res: Response, next: NextFun
   return res.json({
     message: USER_MESSAGE.GET_ME_SUCCESS,
     user
+  })
+}
+
+export const updateMeController = async (req: Request, res: Response, next: NextFunction) => {
+  return res.json({
+    message: USER_MESSAGE.GET_ME_SUCCESS
   })
 }

@@ -7,6 +7,7 @@ import {
   registerController,
   resendEmailVerifyToken,
   resetPasswordController,
+  updateMeController,
   verifyEmailController,
   verifyForgotPasswordTokenController
 } from '~/controllers/users.controller'
@@ -18,6 +19,7 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  updateMeMiddleware,
   verifyForgotPasswordValidate
 } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
@@ -43,4 +45,5 @@ userRouter
   )
   .post('/reset-password', validate(resetPasswordValidator), wrapRequestHandler(resetPasswordController))
   .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
+  .patch('/me', validate(accessTokenValidator), updateMeMiddleware, wrapRequestHandler(updateMeController))
 export default userRouter

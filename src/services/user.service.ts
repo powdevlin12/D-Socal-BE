@@ -8,15 +8,16 @@ import refreshTokenService from './refreshToken.service'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { USER_MESSAGE } from '~/constants/messages'
-import { emailVerifyTokenValidator } from '../middlewares/users.middleware'
+import { ISignToken } from '~/types/users/signToken'
 config()
 
 class UserService {
-  private signAccessToken(user_id: string) {
+  private signAccessToken({ user_id, verify }: ISignToken) {
     return signToken({
       payload: {
         user_id,
-        token_type: TokenType.AccessToken
+        token_type: TokenType.AccessToken,
+        verify
       },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       options: {
@@ -26,11 +27,12 @@ class UserService {
     })
   }
 
-  private signRefreshToken(user_id: string) {
+  private signRefreshToken({ user_id, verify }: ISignToken) {
     return signToken({
       payload: {
         user_id,
-        token_type: TokenType.RefreshToken
+        token_type: TokenType.RefreshToken,
+        verify
       },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
       options: {
@@ -40,11 +42,12 @@ class UserService {
     })
   }
 
-  private signEmailVerifyToken(user_id: string) {
+  private signEmailVerifyToken({ user_id, verify }: ISignToken) {
     return signToken({
       payload: {
         user_id,
-        token_type: TokenType.EmailVerifyToken
+        token_type: TokenType.EmailVerifyToken,
+        verify
       },
       privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
       options: {
@@ -54,15 +57,16 @@ class UserService {
     })
   }
 
-  private signAccessAndRefreshToken(user_id: string) {
-    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  private signAccessAndRefreshToken({ user_id, verify }: ISignToken) {
+    return Promise.all([this.signAccessToken({ user_id, verify }), this.signRefreshToken({ user_id, verify })])
   }
 
-  private signForgotPasswordToken(user_id: string) {
+  private signForgotPasswordToken({ user_id, verify }: ISignToken) {
     return signToken({
       payload: {
         user_id,
-        token_type: TokenType.ForgotPasswordToken
+        token_type: TokenType.ForgotPasswordToken,
+        verify
       },
       privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_VERIFY_TOKEN as string,
       options: {
@@ -74,7 +78,10 @@ class UserService {
 
   async register(payload: RegisterRequestBody) {
     const user_id = new ObjectId()
-    const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
+    const email_verify_token = await this.signEmailVerifyToken({
+      user_id: user_id.toString(),
+      verify: UserVerifyStatus.Unverified
+    })
     const [resultUpdate, token] = await Promise.all([
       instanceDatabase().users.insertOne(
         new User({
@@ -85,7 +92,7 @@ class UserService {
           email_verify_token
         })
       ),
-      this.signAccessAndRefreshToken(user_id.toString())
+      this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify: UserVerifyStatus.Unverified })
     ])
 
     await refreshTokenService.createRefeshToken({
@@ -101,8 +108,8 @@ class UserService {
     return result
   }
 
-  async login(user_id: string) {
-    const token = await this.signAccessAndRefreshToken(user_id)
+  async login(user_id: string, verify: number) {
+    const token = await this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify })
     await refreshTokenService.createRefeshToken({
       user_id: new ObjectId(user_id),
       token: token[1]
@@ -123,7 +130,7 @@ class UserService {
   async verifyEmail(user_id: string) {
     // const updatedAt = new Date()
     const [token, _] = await Promise.all([
-      this.signAccessAndRefreshToken(user_id),
+      this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify: UserVerifyStatus.Unverified }),
       instanceDatabase().users.updateOne(
         {
           _id: new ObjectId(user_id)
@@ -148,7 +155,10 @@ class UserService {
   }
 
   async resendEmailVerifyToken(user_id: string) {
-    const new_email_verify_token = await this.signEmailVerifyToken(user_id)
+    const new_email_verify_token = await this.signEmailVerifyToken({
+      user_id: user_id.toString(),
+      verify: UserVerifyStatus.Unverified
+    })
 
     await instanceDatabase().users.updateOne(
       {
@@ -170,7 +180,10 @@ class UserService {
   }
 
   async forgotPasswordToken(user_id: ObjectId) {
-    const forgot_password_token = await this.signForgotPasswordToken(user_id.toString())
+    const forgot_password_token = await this.signForgotPasswordToken({
+      user_id: user_id.toString(),
+      verify: UserVerifyStatus.Verified
+    })
     await instanceDatabase().users.updateOne(
       {
         _id: user_id
