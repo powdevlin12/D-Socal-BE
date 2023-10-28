@@ -20,6 +20,7 @@ import {
   registerValidator,
   resetPasswordValidator,
   updateMeMiddleware,
+  updateMeValidator,
   verifyForgotPasswordValidate
 } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
@@ -45,5 +46,11 @@ userRouter
   )
   .post('/reset-password', validate(resetPasswordValidator), wrapRequestHandler(resetPasswordController))
   .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
-  .patch('/me', validate(accessTokenValidator), updateMeMiddleware, wrapRequestHandler(updateMeController))
+  .patch(
+    '/me',
+    validate(accessTokenValidator),
+    updateMeMiddleware,
+    updateMeValidator,
+    wrapRequestHandler(updateMeController)
+  )
 export default userRouter

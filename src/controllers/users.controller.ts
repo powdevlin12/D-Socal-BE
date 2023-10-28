@@ -9,6 +9,7 @@ import {
   RegisterRequestBody,
   ResetPasswordBody,
   TokenPayload,
+  UpdateMeReqBody,
   VerifyForgotPasswordBody
 } from '~/models/schemas/requests/User.request'
 import { USER_MESSAGE } from '~/constants/messages'
@@ -146,7 +147,12 @@ export const getMeController = async (req: Request, res: Response, next: NextFun
   })
 }
 
-export const updateMeController = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMeController = async (
+  req: Request<ParamsDictionary, any, UpdateMeReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log(req.body)
   return res.json({
     message: USER_MESSAGE.GET_ME_SUCCESS
   })

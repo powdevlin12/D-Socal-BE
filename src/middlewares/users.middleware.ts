@@ -112,6 +112,43 @@ const forgotPasswordTokenSchema: ParamSchema = {
   }
 }
 
+const nameSchema: ParamSchema = {
+  notEmpty: {
+    errorMessage: USER_MESSAGE.NAME_IS_REQUESTED
+  },
+  isLength: {
+    options: {
+      max: 100,
+      min: 10
+    },
+    errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_100
+  },
+  isString: true
+}
+
+const dateOfBirthSchema: ParamSchema = {
+  isISO8601: {
+    options: {
+      strict: true,
+      strictSeparator: true
+    },
+    errorMessage: USER_MESSAGE.DATE_OF_BIRTH_MUST_BE_IOS8601
+  }
+}
+
+const imageSchema: ParamSchema = {
+  optional: true,
+  isString: true,
+  isLength: {
+    options: {
+      max: 200,
+      min: 10
+    },
+    errorMessage: USER_MESSAGE.PHOTO_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG
+  },
+  trim: true
+}
+
 export const loginValidator = checkSchema(
   {
     email: {
@@ -378,3 +415,72 @@ export const updateMeMiddleware = (req: Request, res: Response, next: NextFuncti
 
   next()
 }
+
+export const updateMeValidator = checkSchema(
+  {
+    name: {
+      ...nameSchema,
+      notEmpty: undefined
+    },
+    date_of_birth: {
+      ...dateOfBirthSchema,
+      optional: true,
+      notEmpty: undefined
+    },
+    avatar: imageSchema,
+    cover_photo: imageSchema,
+    bio: {
+      optional: true,
+      isString: {
+        errorMessage: USER_MESSAGE.BIO_MUST_BE_STRING
+      },
+      isLength: {
+        options: {
+          min: 10,
+          max: 200
+        },
+        errorMessage: USER_MESSAGE.BIO_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
+      }
+    },
+    website: {
+      optional: true,
+      isString: {
+        errorMessage: USER_MESSAGE.WEBSITE_MUST_BE_STRING
+      },
+      isLength: {
+        options: {
+          min: 10,
+          max: 200
+        },
+        errorMessage: USER_MESSAGE.WEBSITE_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
+      }
+    },
+    location: {
+      optional: true,
+      isString: {
+        errorMessage: USER_MESSAGE.LOCATION_MUST_BE_STRING
+      },
+      isLength: {
+        options: {
+          min: 10,
+          max: 200
+        },
+        errorMessage: USER_MESSAGE.LOCATION_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
+      }
+    },
+    username: {
+      optional: true,
+      isString: {
+        errorMessage: USER_MESSAGE.USERNAME_MUST_BE_STRING
+      },
+      isLength: {
+        options: {
+          min: 10,
+          max: 100
+        },
+        errorMessage: USER_MESSAGE.USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG
+      }
+    }
+  },
+  ['body']
+)

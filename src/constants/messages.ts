@@ -31,5 +31,14 @@ export const USER_MESSAGE = {
   VERIFY_FORGOT_PASSWORD_SUCCESS: 'Verify forgot password successfully',
   RESET_PASSWORD_SUCCESS: 'Reset password successfully',
   GET_ME_SUCCESS: 'Get me successful',
-  YOU_RE_NOT_FORBIDDEN: "You're not forbidden"
+  YOU_RE_NOT_FORBIDDEN: "You're not forbidden",
+  PHOTO_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG: 'Photos must be between 10 and 100 characters long',
+  BIO_MUST_BE_STRING: 'Bio must be a string',
+  BIO_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG: 'Bio must be between 10 and 200 characters long',
+  WEBSITE_MUST_BE_STRING: 'Website must be a string',
+  WEBSITE_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG: 'Website must be between 10 and 200 characters long',
+  LOCATION_MUST_BE_STRING: 'Location must be a string',
+  LOCATION_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG: 'Location must be between 10 and 200 characters long',
+  USERNAME_MUST_BE_STRING: 'Username must be a string',
+  USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG: 'Username must be between 10 and 100 characters long'
 } as const
