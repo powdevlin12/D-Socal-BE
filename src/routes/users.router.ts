@@ -50,7 +50,7 @@ userRouter
     '/me',
     validate(accessTokenValidator),
     updateMeMiddleware,
-    updateMeValidator,
+    validate(updateMeValidator),
     wrapRequestHandler(updateMeController)
   )
 export default userRouter
