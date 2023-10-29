@@ -119,9 +119,9 @@ const nameSchema: ParamSchema = {
   isLength: {
     options: {
       max: 100,
-      min: 10
+      min: 5
     },
-    errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_100
+    errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
   },
   isString: true
 }
@@ -207,7 +207,7 @@ export const registerValidator = checkSchema(
           max: 100,
           min: 10
         },
-        errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_1_TO_100
+        errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
       },
       isString: true,
       trim: true

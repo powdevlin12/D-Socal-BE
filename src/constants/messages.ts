@@ -1,7 +1,7 @@
 export const USER_MESSAGE = {
   VALIDATION_ERROR: 'Validation error',
   NAME_IS_REQUESTED: 'Name is requested',
-  NAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Name must be from 1 to 100 characters',
+  NAME_LENGTH_MUST_BE_FROM_5_TO_100: 'Name must be from 5 to 100 characters',
   EMAIL_IS_NOT_VALID: 'Email is not valid',
   EMAIL_IS_NOT_EMPTY: 'Email is not empty',
   EMAIL_IS_ALREADY_IN_USE: 'Email is already in use',
@@ -40,5 +40,6 @@ export const USER_MESSAGE = {
   LOCATION_MUST_BE_STRING: 'Location must be a string',
   LOCATION_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG: 'Location must be between 10 and 200 characters long',
   USERNAME_MUST_BE_STRING: 'Username must be a string',
-  USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG: 'Username must be between 10 and 100 characters long'
+  USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG: 'Username must be between 10 and 100 characters long',
+  UPDATE_ME_SUCCESSFULLY: 'Update me successfully'
 } as const
