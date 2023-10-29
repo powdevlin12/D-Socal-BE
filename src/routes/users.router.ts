@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  followUserController,
   forgotPasswordTokenController,
   getMeController,
   loginController,
@@ -14,6 +15,7 @@ import {
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  followValidator,
   forgotPasswordValidate,
   loginValidator,
   refreshTokenValidator,
@@ -65,4 +67,5 @@ userRouter
     ]),
     wrapRequestHandler(updateMeController)
   )
+  .post('/follow', validate(accessTokenValidator), validate(followValidator), wrapRequestHandler(followUserController))
 export default userRouter

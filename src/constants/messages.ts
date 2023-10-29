@@ -41,5 +41,10 @@ export const USER_MESSAGE = {
   LOCATION_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG: 'Location must be between 10 and 200 characters long',
   USERNAME_MUST_BE_STRING: 'Username must be a string',
   USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG: 'Username must be between 10 and 100 characters long',
-  UPDATE_ME_SUCCESSFULLY: 'Update me successfully'
+  UPDATE_ME_SUCCESSFULLY: 'Update me successfully',
+  FOLLOWED_USER_ID_IS_NOT_VALID: 'followed_user_id is not valid',
+  USER_FOLLOWED_BEFORE: 'user followed before',
+  FOLLOWED_USER_ID_NOT_EMPTY: 'followed user id is not empty',
+  FOLLOW_SUCCESSFULLY: 'followed successfully',
+  FOLLOW_USER_ID_MUST_BE_STRING: 'follow_user_id must be string'
 } as const

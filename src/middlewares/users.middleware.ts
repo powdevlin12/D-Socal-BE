@@ -485,3 +485,33 @@ export const updateMeValidator = checkSchema(
   },
   ['body']
 )
+
+export const followValidator = checkSchema({
+  followed_user_id: {
+    notEmpty: {
+      errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY
+    },
+    isString: {
+      errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING
+    },
+    custom: {
+      options: async (value: string, { req }) => {
+        if (!ObjectId.isValid(new ObjectId(value))) {
+          throw new ErrorWithStatus({
+            message: USER_MESSAGE.FOLLOWED_USER_ID_IS_NOT_VALID,
+            status: HTTP_STATUS.NOT_FOUND
+          })
+        }
+
+        const follower = await instanceDatabase().followers.findOne({
+          followed_user_id: new ObjectId(value)
+        })
+
+        if (follower === null) {
+          return true
+        }
+        throw new ErrorWithStatus({ message: USER_MESSAGE.USER_FOLLOWED_BEFORE, status: HTTP_STATUS.NOT_FOUND })
+      }
+    }
+  }
+})

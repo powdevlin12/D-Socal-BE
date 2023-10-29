@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schema'
 import { instanceDatabase } from './database.service'
-import { RegisterRequestBody, UpdateMeReqBody } from '~/models/schemas/requests/User.request'
+import { FollowReqBody, RegisterRequestBody, UpdateMeReqBody } from '~/models/schemas/requests/User.request'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
@@ -9,6 +9,7 @@ import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ISignToken } from '~/types/users/signToken'
+import Follower from '~/models/schemas/Follower.schema'
 config()
 
 class UserService {
@@ -266,6 +267,15 @@ class UserService {
     )
 
     return user
+  }
+
+  async followUser({ followed_user_id, user_id }: FollowReqBody & { user_id: string }) {
+    await instanceDatabase().followers.insertOne(
+      new Follower({
+        user_id: new ObjectId(user_id),
+        followed_user_id: new ObjectId(followed_user_id)
+      })
+    )
   }
 }
 
