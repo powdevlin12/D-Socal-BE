@@ -142,7 +142,7 @@ const imageSchema: ParamSchema = {
   isLength: {
     options: {
       max: 200,
-      min: 10
+      min: 0
     },
     errorMessage: USER_MESSAGE.PHOTO_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG
   },
@@ -420,7 +420,8 @@ export const updateMeValidator = checkSchema(
   {
     name: {
       ...nameSchema,
-      notEmpty: undefined
+      notEmpty: undefined,
+      optional: true
     },
     date_of_birth: {
       ...dateOfBirthSchema,

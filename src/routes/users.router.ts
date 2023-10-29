@@ -25,6 +25,8 @@ import {
 } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
 import { wrapRequestHandler } from '../utils/handlers'
+import { filterBody } from '~/middlewares/common.middleware'
+import { UpdateMeReqBody } from '~/models/schemas/requests/User.request'
 const userRouter = express.Router()
 
 userRouter
@@ -51,6 +53,16 @@ userRouter
     validate(accessTokenValidator),
     updateMeMiddleware,
     validate(updateMeValidator),
+    filterBody<UpdateMeReqBody>([
+      'avatar',
+      'username',
+      'bio',
+      'cover_photo',
+      'date_of_birth',
+      'location',
+      'name',
+      'website'
+    ]),
     wrapRequestHandler(updateMeController)
   )
 export default userRouter
