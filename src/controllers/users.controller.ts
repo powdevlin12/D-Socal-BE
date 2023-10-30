@@ -10,6 +10,7 @@ import {
   RegisterRequestBody,
   ResetPasswordBody,
   TokenPayload,
+  UnfollowReqParams,
   UpdateMeReqBody,
   VerifyForgotPasswordBody
 } from '~/models/schemas/requests/User.request'
@@ -172,5 +173,15 @@ export const followUserController = async (
 
   return res.status(HTTP_STATUS.CREATED).json({
     message: USER_MESSAGE.FOLLOW_SUCCESSFULLY
+  })
+}
+
+export const unfollowUserController = async (req: Request, res: Response, next: NextFunction) => {
+  const { followed_user_id } = req.params
+  const { user_id } = req.decoded_authorization as TokenPayload
+  await userService.unfollowUser({ followed_user_id, user_id })
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGE.UN_FOLLOW_SUCCESSFULLY
   })
 }

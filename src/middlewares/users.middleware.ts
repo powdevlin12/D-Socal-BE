@@ -11,6 +11,7 @@ import userService from '~/services/user.service'
 import { hashPassword } from '~/utils/cryto'
 import { verifyToken } from '~/utils/jwt'
 import { TokenPayload } from '../models/schemas/requests/User.request'
+import { REGEX_USERNAME } from '~/constants/regex'
 
 const passwordSchema: ParamSchema = {
   notEmpty: true,
@@ -474,12 +475,22 @@ export const updateMeValidator = checkSchema(
       isString: {
         errorMessage: USER_MESSAGE.USERNAME_MUST_BE_STRING
       },
-      isLength: {
-        options: {
-          min: 10,
-          max: 100
-        },
-        errorMessage: USER_MESSAGE.USERNAME_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG
+      custom: {
+        options: async (value: string, { req }) => {
+          if (!REGEX_USERNAME.test(value)) {
+            throw new Error(USER_MESSAGE.USER_NAME_IS_NOT_VALID)
+          }
+
+          const user = await instanceDatabase().users.findOne({
+            username: value as string
+          })
+
+          if (user) {
+            throw Error(USER_MESSAGE.USERNAME_IS_EXIST)
+          }
+
+          return true
+        }
       }
     }
   },
@@ -515,3 +526,38 @@ export const followValidator = checkSchema({
     }
   }
 })
+
+export const unfollowValidator = checkSchema(
+  {
+    followed_user_id: {
+      notEmpty: {
+        errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY
+      },
+      isString: {
+        errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING
+      },
+      custom: {
+        options: async (value: string, { req }) => {
+          const { user_id } = (req as Request).decoded_authorization as TokenPayload
+          if (!ObjectId.isValid(new ObjectId(value))) {
+            throw new ErrorWithStatus({
+              message: USER_MESSAGE.FOLLOWED_USER_ID_IS_NOT_VALID,
+              status: HTTP_STATUS.NOT_FOUND
+            })
+          }
+
+          const follower = await instanceDatabase().followers.findOne({
+            followed_user_id: new ObjectId(value),
+            user_id: new ObjectId(user_id)
+          })
+
+          if (follower === null) {
+            throw new ErrorWithStatus({ message: USER_MESSAGE.NOT_DATA_FOLLOW, status: HTTP_STATUS.NOT_FOUND })
+          }
+          return true
+        }
+      }
+    }
+  },
+  ['params']
+)

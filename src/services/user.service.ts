@@ -1,6 +1,11 @@
 import User from '~/models/schemas/User.schema'
 import { instanceDatabase } from './database.service'
-import { FollowReqBody, RegisterRequestBody, UpdateMeReqBody } from '~/models/schemas/requests/User.request'
+import {
+  FollowReqBody,
+  RegisterRequestBody,
+  UnfollowReqParams,
+  UpdateMeReqBody
+} from '~/models/schemas/requests/User.request'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
@@ -276,6 +281,13 @@ class UserService {
         followed_user_id: new ObjectId(followed_user_id)
       })
     )
+  }
+
+  async unfollowUser({ followed_user_id, user_id }: UnfollowReqParams & { user_id: string }) {
+    await instanceDatabase().followers.deleteOne({
+      user_id: new ObjectId(user_id),
+      followed_user_id: new ObjectId(followed_user_id)
+    })
   }
 }
 

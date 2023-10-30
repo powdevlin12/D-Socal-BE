@@ -46,5 +46,9 @@ export const USER_MESSAGE = {
   USER_FOLLOWED_BEFORE: 'user followed before',
   FOLLOWED_USER_ID_NOT_EMPTY: 'followed user id is not empty',
   FOLLOW_SUCCESSFULLY: 'followed successfully',
-  FOLLOW_USER_ID_MUST_BE_STRING: 'follow_user_id must be string'
+  UN_FOLLOW_SUCCESSFULLY: 'Unfollowed successfully',
+  FOLLOW_USER_ID_MUST_BE_STRING: 'follow_user_id must be string',
+  NOT_DATA_FOLLOW: 'No data follow',
+  USER_NAME_IS_NOT_VALID: 'user name is not valid',
+  USERNAME_IS_EXIST: 'user name is exist'
 } as const
