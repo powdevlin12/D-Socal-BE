@@ -3,6 +3,7 @@ import User from '~/models/schemas/User.schema'
 import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
 import {
+  ChangePasswordReqBody,
   FollowReqBody,
   ForgotPasswordBody,
   LoginRequestBody,
@@ -184,4 +185,16 @@ export const unfollowUserController = async (req: Request, res: Response, next: 
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGE.UN_FOLLOW_SUCCESSFULLY
   })
+}
+
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, any, ChangePasswordReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { new_password } = req.body
+  const { user_id } = req.decoded_authorization as TokenPayload
+
+  const result = await userService.changePassword({ user_id, new_password })
+  return res.status(HTTP_STATUS.CREATED).json(result)
 }

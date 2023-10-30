@@ -50,5 +50,7 @@ export const USER_MESSAGE = {
   FOLLOW_USER_ID_MUST_BE_STRING: 'follow_user_id must be string',
   NOT_DATA_FOLLOW: 'No data follow',
   USER_NAME_IS_NOT_VALID: 'user name is not valid',
-  USERNAME_IS_EXIST: 'user name is exist'
+  USERNAME_IS_EXIST: 'user name is exist',
+  PASSWORD_IS_NOT_EXACTLY: 'password is not exactly',
+  CHANGE_PASSWORD_SUCCESSFULLY: 'change password successfully'
 } as const

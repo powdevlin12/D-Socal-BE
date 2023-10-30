@@ -35,7 +35,7 @@ const passwordSchema: ParamSchema = {
   }
 }
 
-const confirmPasswordSchema: ParamSchema = {
+const confirmPasswordSchema = (key: string): ParamSchema => ({
   notEmpty: true,
   isString: true,
   isLength: {
@@ -55,13 +55,13 @@ const confirmPasswordSchema: ParamSchema = {
   },
   custom: {
     options: (value, { req }) => {
-      if (value !== req.body.password) {
+      if (value !== req.body[key]) {
         throw new ErrorWithStatus({ message: USER_MESSAGE.PASSWORD_NOT_MATCH, status: HTTP_STATUS.NOT_FOUND })
       }
       return true
     }
   }
-}
+})
 
 const forgotPasswordTokenSchema: ParamSchema = {
   custom: {
@@ -230,7 +230,7 @@ export const registerValidator = checkSchema(
       }
     },
     password: passwordSchema,
-    confirm_password: confirmPasswordSchema,
+    confirm_password: confirmPasswordSchema('password'),
     date_of_birth: {
       isISO8601: {
         options: {
@@ -398,7 +398,7 @@ export const verifyForgotPasswordValidate = checkSchema(
 
 export const resetPasswordValidator = checkSchema({
   password: passwordSchema,
-  confirm_password: confirmPasswordSchema,
+  confirm_password: confirmPasswordSchema('password'),
   forgot_password_token: forgotPasswordTokenSchema
 })
 
@@ -561,3 +561,28 @@ export const unfollowValidator = checkSchema(
   },
   ['params']
 )
+
+export const changePasswordValidator = checkSchema({
+  old_password: {
+    ...passwordSchema,
+    custom: {
+      options: async (value, { req }) => {
+        const { user_id } = (req as Request).decoded_authorization as TokenPayload
+        const user = await instanceDatabase().users.findOne({
+          _id: new ObjectId(user_id)
+        })
+
+        if (user?.password !== hashPassword(value)) {
+          throw new ErrorWithStatus({
+            status: HTTP_STATUS.NOT_FOUND,
+            message: USER_MESSAGE.PASSWORD_IS_NOT_EXACTLY
+          })
+        }
+
+        return true
+      }
+    }
+  },
+  new_password: passwordSchema,
+  confirm_new_password: confirmPasswordSchema('new_password')
+})

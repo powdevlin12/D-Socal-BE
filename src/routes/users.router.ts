@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  changePasswordController,
   followUserController,
   forgotPasswordTokenController,
   getMeController,
@@ -25,7 +26,8 @@ import {
   verifiedUserMiddleware,
   updateMeValidator,
   verifyForgotPasswordValidate,
-  unfollowValidator
+  unfollowValidator,
+  changePasswordValidator
 } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
 import { wrapRequestHandler } from '../utils/handlers'
@@ -82,5 +84,12 @@ userRouter
     verifiedUserMiddleware,
     validate(unfollowValidator),
     wrapRequestHandler(unfollowUserController)
+  )
+  .patch(
+    '/change-password',
+    validate(accessTokenValidator),
+    verifiedUserMiddleware,
+    validate(changePasswordValidator),
+    wrapRequestHandler(changePasswordController)
   )
 export default userRouter
