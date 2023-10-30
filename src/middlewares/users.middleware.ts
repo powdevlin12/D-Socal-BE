@@ -401,7 +401,7 @@ export const resetPasswordValidator = checkSchema({
   forgot_password_token: forgotPasswordTokenSchema
 })
 
-export const updateMeMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const verifiedUserMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const { verify } = req.decoded_authorization as TokenPayload
 
   if (verify !== UserVerifyStatus.Verified) {

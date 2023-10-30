@@ -21,7 +21,7 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
-  updateMeMiddleware,
+  verifiedUserMiddleware,
   updateMeValidator,
   verifyForgotPasswordValidate
 } from '~/middlewares/users.middleware'
@@ -53,7 +53,7 @@ userRouter
   .patch(
     '/me',
     validate(accessTokenValidator),
-    updateMeMiddleware,
+    verifiedUserMiddleware,
     validate(updateMeValidator),
     filterBody<UpdateMeReqBody>([
       'avatar',
@@ -67,5 +67,11 @@ userRouter
     ]),
     wrapRequestHandler(updateMeController)
   )
-  .post('/follow', validate(accessTokenValidator), validate(followValidator), wrapRequestHandler(followUserController))
+  .post(
+    '/follow',
+    validate(accessTokenValidator),
+    verifiedUserMiddleware,
+    validate(followValidator),
+    wrapRequestHandler(followUserController)
+  )
 export default userRouter
