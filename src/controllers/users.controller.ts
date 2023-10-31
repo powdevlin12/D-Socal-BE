@@ -198,3 +198,13 @@ export const changePasswordController = async (
   const result = await userService.changePassword({ user_id, new_password })
   return res.status(HTTP_STATUS.CREATED).json(result)
 }
+
+export const oauthLoginController = async (req: Request, res: Response) => {
+  const { code } = req.query
+
+  const data = await userService.oauth(code as string)
+  return res.json({
+    message: 'TEST LOGIN',
+    data
+  })
+}

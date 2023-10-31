@@ -15,6 +15,7 @@ import { config } from 'dotenv'
 import { USER_MESSAGE } from '~/constants/messages'
 import { ISignToken } from '~/types/users/signToken'
 import Follower from '~/models/schemas/Follower.schema'
+import axios from 'axios'
 config()
 
 class UserService {
@@ -308,6 +309,29 @@ class UserService {
     return {
       message: USER_MESSAGE.CHANGE_PASSWORD_SUCCESSFULLY
     }
+  }
+
+  private getOauthGoogleToken = async (code: string) => {
+    const body = {
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code'
+    }
+
+    const { data } = await axios.post('https://oauth2.googleapis.com/token', body, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    return data
+  }
+
+  async oauth(code: string) {
+    const data = await this.getOauthGoogleToken(code)
+
+    return data
   }
 }
 
