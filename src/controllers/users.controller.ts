@@ -21,6 +21,8 @@ import { instanceDatabase } from '~/services/database.service'
 import { ErrorWithStatus } from '~/models/Errors'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
+import { config } from 'dotenv'
+config()
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
@@ -202,9 +204,7 @@ export const changePasswordController = async (
 export const oauthLoginController = async (req: Request, res: Response) => {
   const { code } = req.query
 
-  const data = await userService.oauth(code as string)
-  return res.json({
-    message: 'TEST LOGIN',
-    data
-  })
+  const result = await userService.oauth(code as string)
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&newUser=${result.newUser}&verify=${result.verify}`
+  return res.redirect(urlRedirect)
 }

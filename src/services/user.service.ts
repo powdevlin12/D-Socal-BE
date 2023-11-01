@@ -16,6 +16,9 @@ import { USER_MESSAGE } from '~/constants/messages'
 import { ISignToken } from '~/types/users/signToken'
 import Follower from '~/models/schemas/Follower.schema'
 import axios from 'axios'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { RefreshToken } from '~/models/schemas/RefershToken.schema'
 config()
 
 class UserService {
@@ -325,13 +328,83 @@ class UserService {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-    return data
+    return data as {
+      access_token: string
+      id_token: string
+    }
+  }
+
+  private async getGoogleUserInfo(access_token: string, id_token: string) {
+    const { data } = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+      params: {
+        access_token,
+        alt: 'json'
+      },
+      headers: {
+        Authorization: `Bearer ${id_token}`
+      }
+    })
+
+    return data as {
+      id: string
+      email: string
+      verified_email: boolean
+      name: string
+      given_name: string
+      family_name: string
+      picture: string
+      locate: string
+    }
   }
 
   async oauth(code: string) {
-    const data = await this.getOauthGoogleToken(code)
+    const { id_token, access_token } = await this.getOauthGoogleToken(code)
+    const userInfo = await this.getGoogleUserInfo(access_token, id_token)
+    if (!userInfo.verified_email) {
+      throw new ErrorWithStatus({
+        message: USER_MESSAGE.GMAIL_NOT_VERIFIED,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
+    }
+    // check email exist in database
+    const user = await this.checkExistEmail(userInfo.email)
+    // if exist will be login, else create new user (register)
+    if (user) {
+      const [access_token, refresh_token] = await this.signAccessAndRefreshToken({
+        user_id: user._id.toString(),
+        verify: user.verify
+      })
 
-    return data
+      await refreshTokenService.createRefeshToken(
+        new RefreshToken({
+          token: refresh_token,
+          user_id: user._id
+        })
+      )
+      return {
+        access_token,
+        refresh_token,
+        newUser: 0,
+        verify: user.verify
+      }
+    } else {
+      // random string password
+      const password = (Math.random() + 1).toString(36).substring(15)
+      const [access_token, refresh_token] = await this.register({
+        email: userInfo.email,
+        name: userInfo.name,
+        date_of_birth: new Date().toISOString(),
+        password,
+        confirm_password: password
+      })
+
+      return {
+        access_token,
+        refresh_token,
+        newUser: 1,
+        verify: UserVerifyStatus.Unverified
+      }
+    }
   }
 }
 
