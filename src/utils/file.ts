@@ -11,6 +11,10 @@ export const initFolder = () => {
     })
   }
 }
+export const getFileName = (fullname: string): string => {
+  const arrName = fullname.split('.')
+  return arrName[0]
+}
 
 export const handleUploadSingleImage = async (req: Request) => {
   const form = formidable({
@@ -37,8 +41,6 @@ export const handleUploadSingleImage = async (req: Request) => {
       if (isEmpty(files)) {
         reject(new Error('File type is not empty'))
       }
-
-      console.log('🚀 ~ file: file.ts:34 ~ form.parse ~ files:', files)
 
       resolve((files.image as File[])[0])
     })

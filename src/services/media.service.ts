@@ -1,15 +1,20 @@
 import { Request } from 'express'
-import { handleUploadSingleImage } from '~/utils/file'
+import { getFileName, handleUploadSingleImage } from '~/utils/file'
 import sharp from 'sharp'
-import { UPLOAD_TEMP_FOLDER } from '~/constants/dir'
-
+import { UPLOAD_FOLDER } from '~/constants/dir'
+import path from 'path'
+import fs from 'fs'
 class MediaService {
   async handleUploadImage(req: Request) {
     const file = await handleUploadSingleImage(req)
-    // console.log('🚀 ~ file: media.service.ts:9 ~ MediaService ~ handleUploadImage ~ file:', file)
-    // const info = sharp(file.filepath).jpeg({}).toFile('test.jpg')
-
-    return file
+    const newNameFile = getFileName(file.newFilename)
+    const info = await sharp(file.filepath)
+      .jpeg({
+        quality: 60
+      })
+      .toFile(path.resolve(UPLOAD_FOLDER, `${newNameFile}.jpg`))
+    fs.unlinkSync(file.filepath)
+    return info
   }
 }
 
