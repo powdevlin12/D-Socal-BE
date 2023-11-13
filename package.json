@@ -42,6 +42,8 @@
     "formidable": "v3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "mongodb": "^6.1.0"
+    "mongodb": "^6.1.0",
+    "npm": "^10.2.3",
+    "sharp": "^0.32.6"
   }
 }

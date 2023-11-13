@@ -1,13 +1,12 @@
 import { existsSync, mkdirSync } from 'fs'
-import path, { resolve } from 'path'
-import formidable from 'formidable'
+import formidable, { File } from 'formidable'
 import { Request } from 'express'
 import { isEmpty } from 'lodash'
+import { UPLOAD_TEMP_FOLDER } from '~/constants/dir'
 
 export const initFolder = () => {
-  if (!existsSync(path.resolve('uploads'))) {
-    const uploadFolderPath = path.resolve('uploads')
-    mkdirSync(uploadFolderPath, {
+  if (!existsSync(UPLOAD_TEMP_FOLDER)) {
+    mkdirSync(UPLOAD_TEMP_FOLDER, {
       recursive: true // create nested folders ex : uploads/images
     })
   }
@@ -15,7 +14,7 @@ export const initFolder = () => {
 
 export const handleUploadSingleImage = async (req: Request) => {
   const form = formidable({
-    uploadDir: path.resolve('uploads'),
+    uploadDir: UPLOAD_TEMP_FOLDER,
     maxFiles: 1,
     keepExtensions: true,
     maxFileSize: 300 * 1024,
@@ -25,23 +24,23 @@ export const handleUploadSingleImage = async (req: Request) => {
         form.emit('error' as any, new Error('File type is not valid') as any)
       }
 
-      return true
+      return valid
     }
   })
 
-  return new Promise((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
-      console.log('🚀 ~ file: file.ts:24 ~ form.parse ~ files:', files)
-      console.log('🚀 ~ file: file.ts:24 ~ form.parse ~ fields:', fields)
       if (err) {
-        console.log(err)
-        return reject(err)
+        reject(err)
       }
 
       if (isEmpty(files)) {
-        return reject(new Error('File type is not empty'))
+        reject(new Error('File type is not empty'))
       }
-      resolve(files)
+
+      console.log('🚀 ~ file: file.ts:34 ~ form.parse ~ files:', files)
+
+      resolve((files.image as File[])[0])
     })
   })
 }

@@ -5,6 +5,7 @@ export const wrapRequestHandler = (func: RequestHandler) => {
     try {
       func(req, res, next)
     } catch (error) {
+      console.log('🚀 ~ file: handlers.ts:8 ~ return ~ error:', error)
       next(error)
     }
   }
