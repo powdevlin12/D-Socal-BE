@@ -55,3 +55,7 @@ export const USER_MESSAGE = {
   CHANGE_PASSWORD_SUCCESSFULLY: 'change password successfully',
   GMAIL_NOT_VERIFIED: 'gmail not verified'
 } as const
+
+export const MEDIA_MESSAGE = {
+  UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully'
+} as const

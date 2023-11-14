@@ -9,7 +9,7 @@ class MediaService {
   async handleUploadImage(req: Request) {
     const file = await handleUploadSingleImage(req)
     const newNameFile = getFileName(file.newFilename)
-    const info = await sharp(file.filepath)
+    await sharp(file.filepath)
       .jpeg({
         quality: 60
       })

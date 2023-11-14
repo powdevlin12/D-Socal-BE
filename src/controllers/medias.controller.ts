@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
+import { MEDIA_MESSAGE } from '~/constants/messages'
 import mediaService from '~/services/media.service'
 export const uploadSingleImageController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await mediaService.handleUploadImage(req)
+    const url = await mediaService.handleUploadImage(req)
 
     return res.json({
-      result: data
+      url,
+      message: MEDIA_MESSAGE.UPLOAD_IMAGE_SUCCESSFULLY
     })
   } catch (error) {
     next(error)
