@@ -9,10 +9,9 @@ import { UPLOAD_FOLDER } from './constants/dir'
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT_SERVER || 3000
-// Tạo folder upload
+const port = process.env.PORT_SERVER ?? 3000
+// create folder upload
 initFolder()
-
 // middlewares
 app.use(express.json())
 // routes

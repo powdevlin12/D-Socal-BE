@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { MEDIA_MESSAGE } from '~/constants/messages'
 import mediaService from '~/services/media.service'
-export const uploadSingleImageController = async (req: Request, res: Response, next: NextFunction) => {
+export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const url = await mediaService.handleUploadImage(req)
 
