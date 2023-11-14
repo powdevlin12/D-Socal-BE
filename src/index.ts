@@ -11,6 +11,7 @@ const app = express()
 const port = process.env.PORT_SERVER || 3000
 // Tạo folder upload
 initFolder()
+
 // middlewares
 app.use(express.json())
 // routes

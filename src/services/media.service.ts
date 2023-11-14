@@ -4,6 +4,7 @@ import sharp from 'sharp'
 import { UPLOAD_FOLDER } from '~/constants/dir'
 import path from 'path'
 import fs from 'fs'
+import { isProduction } from '~/constants/media'
 class MediaService {
   async handleUploadImage(req: Request) {
     const file = await handleUploadSingleImage(req)
@@ -14,7 +15,9 @@ class MediaService {
       })
       .toFile(path.resolve(UPLOAD_FOLDER, `${newNameFile}.jpg`))
     fs.unlinkSync(file.filepath)
-    return info
+    return isProduction
+      ? `${process.env.HOST}/upload/${newNameFile}.jpg`
+      : `http://localhost:${process.env.PORT_SERVER}/upload/${newNameFile}.jpg`
   }
 }
 
