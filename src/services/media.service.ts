@@ -1,7 +1,7 @@
 import { Request } from 'express'
-import { getFileName, handleUploadImage } from '~/utils/file'
+import { getFileName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import sharp from 'sharp'
-import { UPLOAD_FOLDER } from '~/constants/dir'
+import { UPLOAD_IMG_FOLDER } from '~/constants/dir'
 import path from 'path'
 import fs from 'fs'
 import { isProduction } from '~/constants/media'
@@ -17,7 +17,7 @@ class MediaService {
           .jpeg({
             quality: 60
           })
-          .toFile(path.resolve(UPLOAD_FOLDER, `${newNameFile}.jpg`))
+          .toFile(path.resolve(UPLOAD_IMG_FOLDER, `${newNameFile}.jpg`))
         fs.unlinkSync(file.filepath)
         return {
           url: isProduction
@@ -29,6 +29,18 @@ class MediaService {
     )
 
     return data
+  }
+
+  async handleUploadVideo(req: Request) {
+    const files = await handleUploadVideo(req)
+    const { newFilename } = files[0]
+
+    return {
+      url: isProduction
+        ? `${process.env.HOST}/upload/${newFilename}`
+        : `http://localhost:${process.env.PORT_SERVER}/upload/${newFilename}`,
+      type: MediaType.Video
+    }
   }
 }
 
