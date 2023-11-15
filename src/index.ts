@@ -6,6 +6,7 @@ import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
 import { initFolder } from './utils/file'
 import { UPLOAD_IMG_FOLDER, UPLOAD_VIDEO_FOLDER } from './constants/dir'
+import staticsRouter from './routes/static.router'
 dotenv.config()
 
 const app = express()
@@ -17,11 +18,10 @@ app.use(express.json())
 // routes
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
+app.use('/statics', staticsRouter)
 // database
 // run().catch(console.dir)
 instanceDatabase()
-// serving static file
-app.use('/upload', express.static(UPLOAD_VIDEO_FOLDER))
 // default handlers
 app.use(defaultErrorHandler)
 
