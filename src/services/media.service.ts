@@ -37,8 +37,8 @@ class MediaService {
 
     return {
       url: isProduction
-        ? `${process.env.HOST}/upload/${newFilename}`
-        : `http://localhost:${process.env.PORT_SERVER}/upload/${newFilename}`,
+        ? `${process.env.HOST}/statics/video/${newFilename}`
+        : `http://localhost:${process.env.PORT_SERVER}/statics/video/${newFilename}`,
       type: MediaType.Video
     }
   }

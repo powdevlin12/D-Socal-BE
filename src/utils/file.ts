@@ -2,7 +2,7 @@ import { existsSync, mkdirSync } from 'fs'
 import formidable, { File } from 'formidable'
 import { Request } from 'express'
 import { isEmpty } from 'lodash'
-import { UPLOAD_IMG_TEMP_FOLDER, UPLOAD_VIDEO_TEMP_FOLDER } from '~/constants/dir'
+import { UPLOAD_IMG_TEMP_FOLDER, UPLOAD_VIDEO_FOLDER, UPLOAD_VIDEO_TEMP_FOLDER } from '~/constants/dir'
 
 export const initFolder = () => {
   ;[UPLOAD_VIDEO_TEMP_FOLDER, UPLOAD_IMG_TEMP_FOLDER].map((dir) => {
@@ -53,7 +53,7 @@ export const handleUploadImage = async (req: Request) => {
 
 export const handleUploadVideo = async (req: Request) => {
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_TEMP_FOLDER,
+    uploadDir: UPLOAD_VIDEO_FOLDER,
     maxFiles: 1,
     keepExtensions: true,
     maxFileSize: 50 * 1024 * 1024,
