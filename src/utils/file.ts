@@ -67,7 +67,7 @@ export const handleUploadVideo = async (req: Request) => {
       return valid
     },
     filename: (name, ext, part, form) => {
-      return `${name.split(' ').join('')}-${date}${ext}`
+      return `${date}${ext}`
     }
   })
 
@@ -84,10 +84,9 @@ export const handleUploadVideo = async (req: Request) => {
       if (files.video) {
         const { originalFilename } = files.video[0] as File
         const indexDotLast = (originalFilename as string).lastIndexOf('.')
-        const newNameVideo = (originalFilename as string).substring(0, indexDotLast).split(' ').join('')
         const ext = (originalFilename as string).substring(indexDotLast + 1)
 
-        files.video[0].newFilename = `${newNameVideo}-${date}.${ext}` ?? ''
+        files.video[0].newFilename = `${date}.${ext}` ?? ''
         resolve(files.video[0] as File)
       }
     })
