@@ -32,8 +32,8 @@ class MediaService {
   }
 
   async handleUploadVideo(req: Request) {
-    const files = await handleUploadVideo(req)
-    const { newFilename } = files[0]
+    const file = await handleUploadVideo(req)
+    const { newFilename } = file
 
     return {
       url: isProduction

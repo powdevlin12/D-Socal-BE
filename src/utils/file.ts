@@ -52,6 +52,7 @@ export const handleUploadImage = async (req: Request) => {
 }
 
 export const handleUploadVideo = async (req: Request) => {
+  const date = new Date().getTime()
   const form = formidable({
     uploadDir: UPLOAD_VIDEO_FOLDER,
     maxFiles: 1,
@@ -59,19 +60,19 @@ export const handleUploadVideo = async (req: Request) => {
     maxFileSize: 50 * 1024 * 1024,
     maxTotalFileSize: 50 * 1024 * 1024 * 1,
     filter: function ({ name, originalFilename, mimetype }) {
-      // const valid = name === 'image' && Boolean(mimetype?.includes('image/'))
-      // if (!valid) {
-      //   form.emit('error' as any, new Error('File type is not valid') as any)
-      // }
-
-      // return valid
-      return true
+      const valid = name === 'video' && (Boolean(mimetype?.includes('mp4')) || Boolean(mimetype?.includes('quicktime')))
+      if (!valid) {
+        form.emit('error' as any, new Error('File type is not valid') as any)
+      }
+      return valid
+    },
+    filename: (name, ext, part, form) => {
+      return `${name.split(' ').join('')}-${date}${ext}`
     }
   })
 
-  return new Promise<File[]>((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
-      console.log('🚀 ~ file: file.ts:74 ~ form.parse ~ files:', files)
       if (err) {
         reject(err)
       }
@@ -80,7 +81,15 @@ export const handleUploadVideo = async (req: Request) => {
         reject(new Error('File type is not empty'))
       }
 
-      resolve(files.video as File[])
+      if (files.video) {
+        const { originalFilename } = files.video[0] as File
+        const indexDotLast = (originalFilename as string).lastIndexOf('.')
+        const newNameVideo = (originalFilename as string).substring(0, indexDotLast).split(' ').join('')
+        const ext = (originalFilename as string).substring(indexDotLast + 1)
+
+        files.video[0].newFilename = `${newNameVideo}-${date}.${ext}` ?? ''
+        resolve(files.video[0] as File)
+      }
     })
   })
 }
