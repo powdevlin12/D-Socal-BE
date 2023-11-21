@@ -19,6 +19,7 @@ app.use(express.json())
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
 app.use('/statics', staticsRouter)
+app.use('/statics/video', express.static(UPLOAD_VIDEO_FOLDER))
 // database
 // run().catch(console.dir)
 instanceDatabase()
