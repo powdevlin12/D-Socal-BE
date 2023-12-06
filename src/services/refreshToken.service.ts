@@ -6,6 +6,12 @@ class RefreshTokenService {
     const result = await instanceDatabase().refreshTokens.insertOne(new RefreshToken(refreshToken))
     return result
   }
+
+  async deleteRefreshToken(token: string) {
+    await instanceDatabase().refreshTokens.deleteOne({
+      token
+    })
+  }
 }
 
 const refreshTokenService = new RefreshTokenService()

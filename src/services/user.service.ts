@@ -19,6 +19,7 @@ import axios from 'axios'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { RefreshToken } from '~/models/schemas/RefershToken.schema'
+import { IRefreshTokenParameter } from '~/types/users/userServiceParameter'
 config()
 
 class UserService {
@@ -125,6 +126,26 @@ class UserService {
       token: token[1]
     })
     return token
+  }
+
+  async refreshToken({ refreshToken, user_id, verify }: IRefreshTokenParameter) {
+    const [newAccessToken, newRefreshToken, _] = await Promise.all([
+      this.signAccessToken({ user_id, verify }),
+      this.signRefreshToken({ user_id, verify }),
+      refreshTokenService.deleteRefreshToken(refreshToken)
+    ])
+
+    await refreshTokenService.createRefeshToken(
+      new RefreshToken({
+        token: newRefreshToken,
+        user_id: new ObjectId(user_id)
+      })
+    )
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    }
   }
 
   async logout(refreshToken: string) {

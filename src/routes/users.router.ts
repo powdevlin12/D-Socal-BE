@@ -7,6 +7,7 @@ import {
   loginController,
   logoutController,
   oauthLoginController,
+  refreshTokenController,
   registerController,
   resendEmailVerifyToken,
   resetPasswordController,
@@ -54,6 +55,7 @@ userRouter
     wrapRequestHandler(verifyForgotPasswordTokenController)
   )
   .post('/reset-password', validate(resetPasswordValidator), wrapRequestHandler(resetPasswordController))
+  .post('/refresh-token', validate(refreshTokenValidator), wrapRequestHandler(refreshTokenController))
   .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
   .patch(
     '/me',
