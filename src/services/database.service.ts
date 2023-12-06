@@ -43,6 +43,7 @@ export default class DatabaseConnect {
       // Send a ping to confirm a successful connection
       await this.client.db(process.env.DB_DATABASE).command({ ping: 1 })
       console.log('Pinged your deployment. You successfully connected to MongoDB!')
+      this.indexUser()
       // Ensures that the client will close when you finish/error
     } catch (err) {
       console.log('🚀 ~ file: database.service.ts:46 ~ DatabaseConnect ~ connect ~ err:', err)
@@ -50,6 +51,12 @@ export default class DatabaseConnect {
     // finally {
     //   await this.client.close()
     // }
+  }
+
+  indexUser() {
+    this.users.createIndex({ email: 1 }, { unique: true })
+    this.users.createIndex({ email: 1, password: 1 })
+    this.users.createIndex({ username: 1 }, { unique: true })
   }
 
   get users(): Collection<User> {
