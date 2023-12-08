@@ -24,6 +24,7 @@ export interface TokenPayload extends JwtPayload {
   token_type: TokenType
   verify: number
   exp: number
+  iat: number
 }
 
 export interface ForgotPasswordBody {

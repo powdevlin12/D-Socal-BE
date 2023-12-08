@@ -120,9 +120,13 @@ class UserService {
       this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify: UserVerifyStatus.Unverified })
     ])
 
+    const decode_refresh_token = await refreshTokenService.decodeRefreshToken(token[1])
+
     await refreshTokenService.createRefeshToken({
-      user_id: user_id,
-      token: token[1]
+      user_id: new ObjectId(user_id),
+      token: token[1],
+      iat: decode_refresh_token.iat,
+      exp: decode_refresh_token.exp
     })
 
     return token
@@ -135,9 +139,13 @@ class UserService {
 
   async login(user_id: string, verify: number) {
     const token = await this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify })
+    const decode_refresh_token = await refreshTokenService.decodeRefreshToken(token[1])
+
     await refreshTokenService.createRefeshToken({
       user_id: new ObjectId(user_id),
-      token: token[1]
+      token: token[1],
+      iat: decode_refresh_token.iat,
+      exp: decode_refresh_token.exp
     })
     return token
   }
@@ -149,12 +157,14 @@ class UserService {
       refreshTokenService.deleteRefreshToken(refreshToken)
     ])
 
-    await refreshTokenService.createRefeshToken(
-      new RefreshToken({
-        token: newRefreshToken,
-        user_id: new ObjectId(user_id)
-      })
-    )
+    const decode_refresh_token = await refreshTokenService.decodeRefreshToken(newRefreshToken)
+
+    await refreshTokenService.createRefeshToken({
+      user_id: new ObjectId(user_id),
+      token: newRefreshToken,
+      iat: decode_refresh_token.iat,
+      exp
+    })
 
     return {
       accessToken: newAccessToken,
@@ -410,12 +420,14 @@ class UserService {
         verify: user.verify
       })
 
-      await refreshTokenService.createRefeshToken(
-        new RefreshToken({
-          token: refresh_token,
-          user_id: user._id
-        })
-      )
+      const decode_refresh_token = await refreshTokenService.decodeRefreshToken(refresh_token)
+
+      await refreshTokenService.createRefeshToken({
+        token: refresh_token,
+        user_id: user._id,
+        iat: decode_refresh_token.iat,
+        exp: decode_refresh_token.exp
+      })
       return {
         access_token,
         refresh_token,
