@@ -44,6 +44,8 @@ export default class DatabaseConnect {
       await this.client.db(process.env.DB_DATABASE).command({ ping: 1 })
       console.log('Pinged your deployment. You successfully connected to MongoDB!')
       this.indexUser()
+      this.indexRefreshTokens()
+      this.indexFollowerUsers()
       // Ensures that the client will close when you finish/error
     } catch (err) {
       console.log('🚀 ~ file: database.service.ts:46 ~ DatabaseConnect ~ connect ~ err:', err)
@@ -53,10 +55,32 @@ export default class DatabaseConnect {
     // }
   }
 
-  indexUser() {
-    this.users.createIndex({ email: 1 }, { unique: true })
-    this.users.createIndex({ email: 1, password: 1 })
-    this.users.createIndex({ username: 1 }, { unique: true })
+  async indexUser() {
+    const isExist = await this.users.indexExists(['email_1', 'email_1_password_1', 'username_1'])
+
+    if (!isExist) {
+      this.users.createIndex({ email: 1 }, { unique: true })
+      this.users.createIndex({ email: 1, password: 1 })
+      this.users.createIndex({ username: 1 }, { unique: true })
+    }
+  }
+
+  async indexRefreshTokens() {
+    const isExist = await this.refreshTokens.indexExists(['exp_1', 'token_1'])
+
+    if (!isExist) {
+      this.refreshTokens.createIndex({ token: 1 })
+      // time to life
+      this.refreshTokens.createIndex({ exp: 1 }, { expireAfterSeconds: 0 })
+    }
+  }
+
+  async indexFollowerUsers() {
+    const isExist = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
+
+    if (!isExist) {
+      this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
+    }
   }
 
   get users(): Collection<User> {
