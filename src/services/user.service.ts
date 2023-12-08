@@ -38,7 +38,21 @@ class UserService {
     })
   }
 
-  private signRefreshToken({ user_id, verify }: ISignToken) {
+  private signRefreshToken({ user_id, verify, exp }: ISignToken) {
+    if (exp) {
+      return signToken({
+        payload: {
+          user_id,
+          token_type: TokenType.RefreshToken,
+          verify,
+          exp
+        },
+        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
+        options: {
+          algorithm: 'HS256'
+        }
+      })
+    }
     return signToken({
       payload: {
         user_id,
@@ -128,10 +142,10 @@ class UserService {
     return token
   }
 
-  async refreshToken({ refreshToken, user_id, verify }: IRefreshTokenParameter) {
+  async refreshToken({ refreshToken, user_id, verify, exp }: IRefreshTokenParameter) {
     const [newAccessToken, newRefreshToken, _] = await Promise.all([
       this.signAccessToken({ user_id, verify }),
-      this.signRefreshToken({ user_id, verify }),
+      this.signRefreshToken({ user_id, verify, exp }),
       refreshTokenService.deleteRefreshToken(refreshToken)
     ])
 
