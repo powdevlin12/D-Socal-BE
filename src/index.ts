@@ -7,6 +7,7 @@ import mediasRouter from './routes/medias.router'
 import { initFolder } from './utils/file'
 import { UPLOAD_IMG_FOLDER, UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import staticsRouter from './routes/static.router'
+import todosRouter from './routes/todos.router'
 dotenv.config()
 
 const app = express()
@@ -20,6 +21,7 @@ app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
 app.use('/statics', staticsRouter)
 app.use('/statics/video', express.static(UPLOAD_VIDEO_FOLDER))
+app.use('/todos', todosRouter)
 // database
 // run().catch(console.dir)
 instanceDatabase()

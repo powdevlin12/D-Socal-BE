@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import User from '~/models/schemas/User.schema'
 import { RefreshToken } from '~/models/schemas/RefershToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
+import Todo from '~/models/schemas/Todo.schema'
 dotenv.config()
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.s9ypdsa.mongodb.net/${process.env.DB_DATABASE}?retryWrites=true&w=majority`
@@ -93,6 +94,10 @@ export default class DatabaseConnect {
 
   get followers(): Collection<Follower> {
     return this.db.collection(process.env.DB_COLLECTION_FOLLOWER as string)
+  }
+
+  get todos(): Collection<Todo> {
+    return this.db.collection('todos')
   }
 
   static getInstance() {
