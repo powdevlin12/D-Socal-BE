@@ -2,11 +2,18 @@ import { config } from 'dotenv'
 import argv from 'minimist'
 
 const options = argv(process.argv.slice(2))
-console.log('🚀 ~ options:', options)
 
-config()
+type TEnvironment = 'production' | 'staging' | 'development'
 
-export const isProduction = false
+const envVariable = {
+  production: '.env.production',
+  staging: '.env.staging',
+  development: '.env.development'
+}
+
+config({
+  path: envVariable[(options.env as TEnvironment) ?? 'development']
+})
 
 export const envConfig = {
   host: process.env.HOST as string,
