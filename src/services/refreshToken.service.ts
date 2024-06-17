@@ -2,6 +2,7 @@ import { RefreshToken, RefreshTokenType } from '~/models/schemas/RefershToken.sc
 import { instanceDatabase } from './database.service'
 import { verifyToken } from '~/utils/jwt'
 import { TokenPayload } from '~/models/schemas/requests/User.request'
+import { envConfig } from '~/constants/config'
 
 class RefreshTokenService {
   async createRefeshToken(refreshToken: RefreshTokenType) {
@@ -18,7 +19,7 @@ class RefreshTokenService {
   public decodeRefreshToken(token: string): Promise<TokenPayload> {
     return verifyToken({
       token,
-      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN
+      privateKey: envConfig.secretRefreshToken
     })
   }
 }

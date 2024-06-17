@@ -1,16 +1,15 @@
 import express from 'express'
-import userRouter from './routes/users.router'
-import { instanceDatabase } from './services/database.service'
-import dotenv from 'dotenv'
+import { UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
-import { initFolder } from './utils/file'
-import { UPLOAD_IMG_FOLDER, UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import staticsRouter from './routes/static.router'
-dotenv.config()
+import userRouter from './routes/users.router'
+import { instanceDatabase } from './services/database.service'
+import { initFolder } from './utils/file'
+import { envConfig } from './constants/config'
 
 const app = express()
-const port = process.env.PORT_SERVER ?? 3000
+const port = envConfig.portServer ?? 3000
 // create folder upload
 initFolder()
 // middlewares

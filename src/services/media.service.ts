@@ -6,6 +6,7 @@ import path from 'path'
 import fs from 'fs'
 import { isProduction } from '~/constants/media'
 import { MediaType } from '~/constants/enums'
+import { envConfig } from '~/constants/config'
 class MediaService {
   async handleUploadImage(req: Request) {
     const files = await handleUploadImage(req)
@@ -21,8 +22,8 @@ class MediaService {
         fs.unlinkSync(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/statics/image/${newNameFile}.jpg`
-            : `http://localhost:${process.env.PORT_SERVER}/statics/image/${newNameFile}.jpg`,
+            ? `${envConfig.host}/statics/image/${newNameFile}.jpg`
+            : `http://localhost:${envConfig.portServer}/statics/image/${newNameFile}.jpg`,
           type: MediaType.Image
         }
       })
@@ -37,8 +38,8 @@ class MediaService {
 
     return {
       url: isProduction
-        ? `${process.env.HOST}/statics/video/${newFilename}`
-        : `http://localhost:${process.env.PORT_SERVER}/statics/video/${newFilename}`,
+        ? `${envConfig.host}/statics/video/${newFilename}`
+        : `http://localhost:${envConfig.portServer}/statics/video/${newFilename}`,
       type: MediaType.Video
     }
   }

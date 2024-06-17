@@ -1,25 +1,25 @@
-import User from '~/models/schemas/User.schema'
-import { instanceDatabase } from './database.service'
+import axios from 'axios'
+import { config } from 'dotenv'
+import { ObjectId } from 'mongodb'
+import { envConfig } from '~/constants/config'
+import { TokenType, UserVerifyStatus } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { USER_MESSAGE } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
+import Follower from '~/models/schemas/Follower.schema'
 import {
   FollowReqBody,
   RegisterRequestBody,
   UnfollowReqParams,
   UpdateMeReqBody
 } from '~/models/schemas/requests/User.request'
+import User from '~/models/schemas/User.schema'
+import { ISignToken } from '~/types/users/signToken'
+import { IRefreshTokenParameter } from '~/types/users/userServiceParameter'
 import { hashPassword } from '~/utils/cryto'
 import { signToken } from '~/utils/jwt'
-import { TokenType, UserVerifyStatus } from '~/constants/enums'
+import { instanceDatabase } from './database.service'
 import refreshTokenService from './refreshToken.service'
-import { ObjectId } from 'mongodb'
-import { config } from 'dotenv'
-import { USER_MESSAGE } from '~/constants/messages'
-import { ISignToken } from '~/types/users/signToken'
-import Follower from '~/models/schemas/Follower.schema'
-import axios from 'axios'
-import { ErrorWithStatus } from '~/models/Errors'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { RefreshToken } from '~/models/schemas/RefershToken.schema'
-import { IRefreshTokenParameter } from '~/types/users/userServiceParameter'
 config()
 
 class UserService {
@@ -30,10 +30,10 @@ class UserService {
         token_type: TokenType.AccessToken,
         verify
       },
-      privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
+      privateKey: envConfig.secretAccessToken,
       options: {
         algorithm: 'HS256',
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRE_IN
+        expiresIn: envConfig.accessTokenExpireIn
       }
     })
   }
@@ -47,7 +47,7 @@ class UserService {
           verify,
           exp
         },
-        privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
+        privateKey: envConfig.secretRefreshToken as string,
         options: {
           algorithm: 'HS256'
         }
@@ -59,10 +59,10 @@ class UserService {
         token_type: TokenType.RefreshToken,
         verify
       },
-      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
+      privateKey: envConfig.secretRefreshToken,
       options: {
         algorithm: 'HS256',
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRE_IN
+        expiresIn: envConfig.refreshTokenExpireIn
       }
     })
   }
@@ -74,10 +74,10 @@ class UserService {
         token_type: TokenType.EmailVerifyToken,
         verify
       },
-      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
+      privateKey: envConfig.secretEmailVerifyToken,
       options: {
         algorithm: 'HS256',
-        expiresIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRE_IN
+        expiresIn: envConfig.emailVerifyTokenExprireIn
       }
     })
   }
@@ -93,10 +93,10 @@ class UserService {
         token_type: TokenType.ForgotPasswordToken,
         verify
       },
-      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_VERIFY_TOKEN as string,
+      privateKey: envConfig.secretForgotPasswordVerifyToken,
       options: {
         algorithm: 'HS256',
-        expiresIn: process.env.FORGOT_PASSWORD_VERIFY_TOKEN_EXPIRE_IN
+        expiresIn: envConfig.forgotVerifyTokenExprireIn
       }
     })
   }
@@ -362,9 +362,9 @@ class UserService {
   private getOauthGoogleToken = async (code: string) => {
     const body = {
       code,
-      client_id: process.env.GOOGLE_CLIENT_ID,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      client_id: envConfig.googleClientId,
+      client_secret: envConfig.googleClientSecret,
+      redirect_uri: envConfig.googleRedirectURI,
       grant_type: 'authorization_code'
     }
 
