@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: DSocal start 10/2023
+  description: |-
+    ## This is server api of Socal created by Tran Thu Dat
+  contact:
+    email: trandat.dev12@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: http://localhost:1230
+    description: 'API staging'
+  - url: https://petstore3.swagger.io/api/v2
+    description: 'API dev'
+  - url: https://petstore3.swagger.io/api/v3
+    description: 'API production'
+tags:
+  - name: Users
+    description: Everything about your Pets
+  - name: Followers
+    description: Access to Petstore orders
+paths:
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Đăng nhập
+      description: Đăng nhập vào hệ thống
+      operationId: login
+      requestBody:
+        description: Thông tin đăng nhập
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: trandat1@gmail.com
+                password:
+                  type: string
+                  example: Thudat123
+        required: true
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login Success
+                  token:
+                    type: array
+                    example: ['accessToken', 'refreshToken']
+        '422':
+          description: Invalid input
