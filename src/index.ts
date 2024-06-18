@@ -9,6 +9,7 @@ import { initFolder } from './utils/file'
 import { envConfig } from './constants/config'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import cors from 'cors'
 
 const app = express()
 const port = envConfig.portServer ?? 3000
@@ -17,6 +18,7 @@ initFolder()
 // middlewares
 app.use(express.json())
 app.use(helmet())
+app.use(cors())
 
 // ** limit request
 const limiter = rateLimit({
