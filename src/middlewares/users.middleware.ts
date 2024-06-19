@@ -207,7 +207,7 @@ export const registerValidator = checkSchema(
       isLength: {
         options: {
           max: 100,
-          min: 10
+          min: 5
         },
         errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
       },
