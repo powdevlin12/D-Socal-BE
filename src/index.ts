@@ -11,6 +11,14 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import cors from 'cors'
 
+import YAML from 'yaml'
+import fs from 'fs'
+import path from 'path'
+import swaggerUI from 'swagger-ui-express'
+
+const file = fs.readFileSync(path.resolve('doc-api.yaml'), 'utf-8')
+const swaggerDocument = YAML.parse(file)
+
 const app = express()
 const port = envConfig.portServer ?? 3000
 // create folder upload
@@ -19,6 +27,7 @@ initFolder()
 app.use(express.json())
 app.use(helmet())
 app.use(cors())
+app.use('/doc-api', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 // ** limit request
 const limiter = rateLimit({

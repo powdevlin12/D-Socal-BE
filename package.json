@@ -40,6 +40,8 @@
     "@types/formidable": "^3.4.4",
     "@types/mime": "^3.0.4",
     "@types/minimist": "^1.2.5",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -54,6 +56,9 @@
     "minimist": "^1.2.8",
     "mongodb": "^6.1.0",
     "npm": "^10.2.3",
-    "sharp": "^0.32.6"
+    "sharp": "^0.32.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.4.5"
   }
 }
