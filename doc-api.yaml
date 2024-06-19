@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: DSocal start 10/2023
+  description: |-
+    ## This is server api of Socal created by Tran Thu Dat
+  contact:
+    email: trandat.dev12@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: http://localhost:1230
+    description: 'API staging'
+  - url: https://petstore3.swagger.io/api/v2
+    description: 'API dev'
+  - url: https://petstore3.swagger.io/api/v3
+    description: 'API production'
+tags:
+  - name: Users
+    description: Everything about your Users
+  - name: Followers
+    description: Access to Petstore Followers
+paths:
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Đăng nhập
+      description: Đăng nhập vào hệ thống
+      operationId: login
+      requestBody:
+        description: Thông tin đăng nhập
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginBody'
+        required: true
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthentication'
+        '422':
+          description: Invalid input
+
+  /users/get-me:
+    get:
+      tags:
+        - Users
+      summary: Thông tin tài khoản đăng nhập
+      description: Thông tin tài khoản đăng nhập
+      operationId: get me
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Get me thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Đăng ký
+      description: Đăng ký vào hệ thống
+      operationId: register
+      requestBody:
+        description: Thông tin đăng nhập
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+        required: true
+      responses:
+        '200':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthentication'
+components:
+  schemas:
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          example: trandat1@gmail.com
+        password:
+          type: string
+          example: Sgod123@
+      required:
+        - email
+        - password
+    SuccessAuthentication:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Login Success
+        token:
+          type: array
+          example: ['accessToken', 'refreshToken']
+    UserVerifyStatus:
+      type: number
+      enum:
+        - Unverified
+        - Verified
+        - Banned
+      example: 1
+    Me:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: '666d623b10aeff617a6e0f94'
+        name:
+          type: string
+          example: 'Tran Thu Dat'
+        email:
+          type: string
+          example: 'thudatdl123@gmail.com'
+        date_of_birth:
+          type: string
+          format: date-time
+          example: '2001-03-12T00:00:00.000Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-06-15T09:43:23.462Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2024-06-15T09:43:23.462Z'
+        verify:
+          $ref: '#/components/schemas/UserVerifyStatus'
+        bio:
+          type: string
+          example: ''
+        location:
+          type: string
+          example: ''
+        website:
+          type: string
+          example: ''
+        username:
+          type: string
+          example: ''
+        avatar:
+          type: string
+          example: ''
+        cover_photo:
+          type: string
+          example: ''
+    RegisterUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'John Doe'
+        email:
+          type: string
+          example: 'johndoe@example.com'
+        password:
+          type: string
+          example: 'mysecretpassword'
+        confirm_password:
+          type: string
+          example: 'mysecretpassword'
+        date_of_birth:
+          type: string
+          format: date
+          example: '2000-01-01'
+      required:
+        - name
+        - email
+        - password
+        - confirm_password
+        - date_of_birth
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

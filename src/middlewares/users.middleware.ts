@@ -12,6 +12,7 @@ import { hashPassword } from '~/utils/cryto'
 import { verifyToken } from '~/utils/jwt'
 import { TokenPayload } from '../models/schemas/requests/User.request'
 import { REGEX_USERNAME } from '~/constants/regex'
+import { envConfig } from '~/constants/config'
 
 const passwordSchema: ParamSchema = {
   notEmpty: true,
@@ -75,7 +76,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
-          privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_VERIFY_TOKEN as string
+          privateKey: envConfig.secretForgotPasswordVerifyToken
         })
 
         const { user_id } = decoded_forgot_password_token
@@ -206,7 +207,7 @@ export const registerValidator = checkSchema(
       isLength: {
         options: {
           max: 100,
-          min: 10
+          min: 5
         },
         errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
       },
@@ -260,7 +261,7 @@ export const accessTokenValidator = checkSchema(
 
             const decoded_authorization = await verifyToken({
               token: accessToken,
-              privateKey: process.env.JWT_SECRET_ACCESS_TOKEN
+              privateKey: envConfig.secretAccessToken
             })
             ;(req as Request).decoded_authorization = decoded_authorization
             return true
@@ -293,7 +294,7 @@ export const refreshTokenValidator = checkSchema(
               })
             }
             const [decoded_refresh_token, refresh_token] = await Promise.all([
-              verifyToken({ token: value, privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
+              verifyToken({ token: value, privateKey: envConfig.secretRefreshToken as string }),
               instanceDatabase().refreshTokens.findOne({
                 token: value
               })
@@ -338,7 +339,7 @@ export const emailVerifyTokenValidator = checkSchema(
           try {
             const decoded_email_verify_token = await verifyToken({
               token: value,
-              privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+              privateKey: envConfig.secretEmailVerifyToken
             })
             ;(req as Request).decoded_email_verify_token = decoded_email_verify_token
             return true

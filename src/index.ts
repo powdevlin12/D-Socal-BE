@@ -1,20 +1,45 @@
 import express from 'express'
-import userRouter from './routes/users.router'
-import { instanceDatabase } from './services/database.service'
-import dotenv from 'dotenv'
+import { UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
-import { initFolder } from './utils/file'
-import { UPLOAD_IMG_FOLDER, UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import staticsRouter from './routes/static.router'
-dotenv.config()
+import userRouter from './routes/users.router'
+import { instanceDatabase } from './services/database.service'
+import { initFolder } from './utils/file'
+import { envConfig } from './constants/config'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
+import cors from 'cors'
+
+import YAML from 'yaml'
+import fs from 'fs'
+import path from 'path'
+import swaggerUI from 'swagger-ui-express'
+
+const file = fs.readFileSync(path.resolve('doc-api.yaml'), 'utf-8')
+const swaggerDocument = YAML.parse(file)
 
 const app = express()
-const port = process.env.PORT_SERVER ?? 3000
+const port = envConfig.portServer ?? 3000
 // create folder upload
 initFolder()
 // middlewares
 app.use(express.json())
+app.use(helmet())
+app.use(cors())
+app.use('/doc-api', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
+
+// ** limit request
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
+})
+
+app.use(limiter)
+
 // routes
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
