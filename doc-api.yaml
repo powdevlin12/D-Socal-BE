@@ -84,6 +84,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessAuthentication'
+
+  /users/verify-email:
+    post:
+      tags:
+        - Users
+      summary: Xác thực email
+      description: Xác thực email khi mới đăng ký
+      operationId: verify-email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email_verify_token:
+                  type: string
+                  example: 'your_verification_token_here'
+      responses:
+        '200':
+          description: Verify email thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyEmail'
 components:
   schemas:
     LoginBody:
@@ -169,10 +193,10 @@ components:
           example: 'johndoe@example.com'
         password:
           type: string
-          example: 'mysecretpassword'
+          example: '!Thudat123'
         confirm_password:
           type: string
-          example: 'mysecretpassword'
+          example: '!Thudat123'
         date_of_birth:
           type: string
           format: date
@@ -183,6 +207,21 @@ components:
         - password
         - confirm_password
         - date_of_birth
+    VerifyEmail:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            access_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjY3MzBiYWIxM2U2ZWIyZWI4MTY1NTg3IiwidG9rZW5fdHlwZSI6MCwidmVyaWZ5IjowLCJpYXQiOjE3MTg4ODk1NjksImV4cCI6MTcxODg5MDQ2OX0.uFxB9T7oR9RCNtK2zbDqlW2IH-4dshzltistTNHgkE8
+            refresh_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjY3MzBiYWIxM2U2ZWIyZWI4MTY1NTg3IiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjowLCJpYXQiOjE3MTg4ODk1NjksImV4cCI6MTcyNzUyOTU2OX0.RZmrp2moQBb9UX6t8BasSABVz2R3j8Lt64nbN4N27EY
+        message:
+          type: string
+          example: Verify account success
   securitySchemes:
     BearerAuth:
       type: http
