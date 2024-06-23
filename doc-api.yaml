@@ -108,6 +108,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerifyEmail'
+
+  /users/logout:
+    post:
+      tags:
+        - Users
+      summary: Đăng xuất
+      description: Đăng xuất khỏi hệ thông
+      operationId: logout
+      requestBody:
+        description: Thông tin đăng xuất
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzN2Y4OTQ2YmU4ZDJlODM0NjU5MjJiIiwidG9rZW5fdHlwZSI6MCwidmVyaWZ5IjoxLCJpYXQiOjE3MTkxNDA5NDEsImV4cCI6MTcxOTE0MTg0MX0.KbW2bHQfsisq1bTzEpzcyAC_BKko0PvkaF1j6YNr6WY
+        required: true
+      responses:
+        '200':
+          description: Đăng xuất thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthentication'
+
+      security:
+        - BearerAuth: []
+
 components:
   schemas:
     LoginBody:
