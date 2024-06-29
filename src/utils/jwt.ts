@@ -1,8 +1,6 @@
 import { KeyObject } from 'crypto'
 import { config } from 'dotenv'
-import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
-import { ErrorWithStatus } from '../models/Errors'
-import HTTP_STATUS from '~/constants/httpStatus'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenPayload } from '~/models/schemas/requests/User.request'
 config()
 
