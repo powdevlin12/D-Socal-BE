@@ -20,7 +20,9 @@ tags:
   - name: Users
     description: Everything about your Users
   - name: Followers
-    description: Access to Petstore Followers
+    description: handle Follower
+  - name: Tweets
+    description: ref to Tweets
 paths:
   /users/login:
     post:
@@ -138,6 +140,30 @@ paths:
       security:
         - BearerAuth: []
 
+  /tweets:
+    post:
+      tags:
+        - Tweets
+      summary: Tạo tweet
+      description: Tạo tweet
+      operationId: create tweets
+      requestBody:
+        description: Tạo tweet
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTweetsBody'
+        required: true
+      responses:
+        '200':
+          description: Tạo tweet thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthentication'
+        '422':
+          description: Invalid input
+
 components:
   schemas:
     LoginBody:
@@ -252,6 +278,28 @@ components:
         message:
           type: string
           example: Verify account success
+
+    CreateTweetsBody:
+      type: object
+      properties:
+        type:
+          type: number
+          example: 1
+        audience:
+          type: number
+          example: 2
+        content:
+          type: string
+          example: Thu Dat van vo song toan
+        parent_id:
+          type: string
+          example: ''
+        hashTags:
+          type: array
+          example: ['dat', 'thu', 'tran']
+        mentions:
+          type: array
+          example: ['objectID', 'objectID', 'objectID']
   securitySchemes:
     BearerAuth:
       type: http
