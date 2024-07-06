@@ -144,6 +144,8 @@ paths:
     post:
       tags:
         - Tweets
+      security:
+        - BearerAuth: []
       summary: Tạo tweet
       description: Tạo tweet
       operationId: create tweets

@@ -4,6 +4,7 @@ import User from '~/models/schemas/User.schema'
 import { RefreshToken } from '~/models/schemas/RefershToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
 import { envConfig } from '~/constants/config'
+import Tweet from '~/models/schemas/Tweet.schema'
 dotenv.config()
 
 const uri = `mongodb+srv://${envConfig.dbUsername}:${envConfig.dbPassword}@cluster0.s9ypdsa.mongodb.net/${envConfig.dbName}?retryWrites=true&w=majority`
@@ -68,6 +69,10 @@ export default class DatabaseConnect {
 
   get users(): Collection<User> {
     return this.db.collection(envConfig.collectionUsers as string)
+  }
+
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(envConfig.collectionTweets as string)
   }
 
   get refreshTokens(): Collection<RefreshToken> {

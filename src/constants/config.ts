@@ -21,6 +21,7 @@ export const envConfig = {
   dbPassword: process.env.DB_PASSWORD as string,
   dbName: process.env.DB_DATABASE as string,
   collectionUsers: process.env.DB_COLLECTION_USERS as string,
+  collectionTweets: process.env.DB_COLLECTION_TWEETS as string,
   collectionRefreshTokens: process.env.DB_COLLECTION_REFRESH_TOKENS as string,
   collectionFollower: process.env.DB_COLLECTION_FOLLOWER as string,
   portServer: process.env.PORT_SERVER as string,

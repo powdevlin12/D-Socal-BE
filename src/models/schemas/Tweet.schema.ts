@@ -22,13 +22,13 @@ export interface TweetRequestBody {
 }
 
 interface TweetConstructor {
-  user_id: ObjectId
+  user_id: string
   type: TweetType
   audience: TweetAudience
   content: string
-  parent_id: null | ObjectId // null only tweet original
+  parent_id: null | string // null only tweet original
   hashTags: ObjectId[]
-  mentions: ObjectId[]
+  mentions: string[]
   // medias : Media[]
   guest_views: number
   user_views: number
@@ -66,13 +66,13 @@ export default class Tweet {
   }: TweetConstructor) {
     const date = new Date()
     this._id = new ObjectId()
-    this.user_id = user_id
+    this.user_id = new ObjectId(user_id)
     this.type = type
     this.audience = audience
     this.content = content
-    this.parent_id = parent_id
+    this.parent_id = parent_id ? new ObjectId(parent_id) : null
     this.hashTags = hashTags
-    this.mentions = mentions
+    this.mentions = mentions.map((mention) => new ObjectId(mention))
     this.guest_views = guest_views
     this.user_views = user_views
     this.created_at = created_at || date
