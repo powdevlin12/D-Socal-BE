@@ -18,7 +18,6 @@ class TweetsService {
       created_at: date,
       updated_at: date
     })
-    console.log({ tweet })
     const result = await instanceDatabase().tweets.insertOne(tweet)
 
     const tweetsInsert = await instanceDatabase().tweets.findOne({

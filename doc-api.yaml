@@ -23,6 +23,9 @@ tags:
     description: handle Follower
   - name: Tweets
     description: ref to Tweets
+  - name: Hashtags
+    description: ref to Hashtags
+
 paths:
   /users/login:
     post:
@@ -159,6 +162,36 @@ paths:
       responses:
         '200':
           description: Tạo tweet thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthentication'
+        '422':
+          description: Invalid input
+
+  /hash-tags:
+    post:
+      tags:
+        - Hashtags
+      security:
+        - BearerAuth: []
+      summary: Tạo hashtags
+      description: Tạo hashtags
+      operationId: create hashtags
+      requestBody:
+        description: Tạo hashtags
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: '18+ ne'
+        required: true
+      responses:
+        '200':
+          description: Tạo hashtags thành công
           content:
             application/json:
               schema:
