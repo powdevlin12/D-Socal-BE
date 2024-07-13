@@ -71,3 +71,8 @@ export const TWEET_MESSAGE = {
   HASH_TAGS_IS_ARRAY_OF_STRING: 'Hash tags is array of string',
   MENTIONS_IS_ARRAY_OF_OBJECT_ID: 'Mentions is array of object id'
 }
+
+export const HASH_TAG_MESSAGE = {
+  HASH_TAG_IS_EXIST: 'Hash tag is exist',
+  HASH_TAG_LENGTH_IS_FROM_3_TO_20_CHARACTOR: 'Hash tag length is from 3 to 20 charactor'
+}

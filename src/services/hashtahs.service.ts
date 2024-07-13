@@ -5,7 +5,7 @@ class HashTagsService {
   public async createHashTags(body: HashTagsBody) {
     const { name } = body
     const hashTag = new HashTags({
-      name
+      name: name.toLowerCase()
     })
 
     const result = await instanceDatabase().hashTags.insertOne(hashTag)
