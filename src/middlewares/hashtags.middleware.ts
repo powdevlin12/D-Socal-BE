@@ -1,5 +1,4 @@
 import { checkSchema } from 'express-validator'
-import { isLength } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { HASH_TAG_MESSAGE } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'

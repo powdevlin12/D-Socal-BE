@@ -22,10 +22,12 @@ export const createTweetsValidator = checkSchema({
     custom: {
       options: (value, { req }) => {
         const type = req.body.type as TweetType
-        if ([TweetType.QuoteTweet, TweetType.Comment, TweetType.ReTweet].includes(type) && !ObjectId.isValid(value)) {
-          throw Error(TWEET_MESSAGE.PARENT_ID_INVALID)
-        } else if (type === TweetType.Tweet && !!type) {
-          throw Error(TWEET_MESSAGE.PARENT_ID_MUST_BE_NULL)
+        if (value) {
+          if ([TweetType.QuoteTweet, TweetType.Comment, TweetType.ReTweet].includes(type) && !ObjectId.isValid(value)) {
+            throw Error(TWEET_MESSAGE.PARENT_ID_INVALID)
+          } else if (type === TweetType.Tweet && !!type) {
+            throw Error(TWEET_MESSAGE.PARENT_ID_MUST_BE_NULL)
+          }
         }
         return true
       }

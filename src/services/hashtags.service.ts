@@ -16,6 +16,25 @@ class HashTagsService {
 
     return hashTagsInsert
   }
+
+  public async createHashTagsCheckExist(body: HashTagsBody) {
+    const hashTagsDocument = await instanceDatabase().hashTags.findOneAndUpdate(
+      {
+        name: body.name.trim()
+      },
+      {
+        $setOnInsert: new HashTags({
+          name: body.name.trim()
+        })
+      },
+      {
+        upsert: true,
+        returnDocument: 'after'
+      }
+    )
+
+    return hashTagsDocument
+  }
 }
 
 const hashTagsService = new HashTagsService()
