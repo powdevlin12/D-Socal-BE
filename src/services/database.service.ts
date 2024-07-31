@@ -6,6 +6,7 @@ import Follower from '~/models/schemas/Follower.schema'
 import { envConfig } from '~/constants/config'
 import Tweet from '~/models/schemas/Tweet.schema'
 import { HashTags } from '~/models/schemas/HashTags.schema'
+import { BookmarkSchema } from '~/models/schemas/Bookmark.schema'
 dotenv.config()
 
 const uri = `mongodb+srv://${envConfig.dbUsername}:${envConfig.dbPassword}@cluster0.s9ypdsa.mongodb.net/${envConfig.dbName}?retryWrites=true&w=majority`
@@ -86,6 +87,10 @@ export default class DatabaseConnect {
 
   get hashTags(): Collection<HashTags> {
     return this.db.collection(envConfig.collectionHashTags as string)
+  }
+
+  get bookmarks(): Collection<BookmarkSchema> {
+    return this.db.collection(envConfig.collectionBookmarks as string)
   }
 
   static getInstance() {
