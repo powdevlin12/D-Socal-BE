@@ -14,8 +14,7 @@ export class BookmarkSchema {
   create_at: Date
 
   constructor(data: TBookmarkRequire) {
-    console.log(data)
-    const { tweet_id, user_id, _id, create_at } = data
+    const { tweet_id, user_id, create_at } = data
     this._id = new ObjectId()
     this.user_id = new ObjectId(user_id)
     this.tweet_id = new ObjectId(tweet_id)

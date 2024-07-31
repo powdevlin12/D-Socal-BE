@@ -4,6 +4,7 @@ import { instanceDatabase } from './database.service'
 class BookmarkService {
   public createBookmark = async (userId: string, body: TBookmarkRequire) => {
     const { tweet_id, _id, create_at } = body
+    console.log('🚀 ~ BookmarkService ~ createBookmark= ~ tweet_id:', tweet_id)
     const result = await instanceDatabase().bookmarks.insertOne(
       new BookmarkSchema({
         tweet_id,
@@ -12,8 +13,10 @@ class BookmarkService {
         create_at
       })
     )
-
-    return result
+    const newBookmark = instanceDatabase().bookmarks.findOne({
+      _id: result.insertedId
+    })
+    return newBookmark
   }
 }
 
