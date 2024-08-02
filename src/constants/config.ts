@@ -26,6 +26,7 @@ export const envConfig = {
   collectionFollower: process.env.DB_COLLECTION_FOLLOWER as string,
   collectionHashTags: process.env.DB_COLLECTION_HASHTAGS as string,
   collectionBookmarks: process.env.DB_COLLECTION_BOOKMARK as string,
+  collectionLikes: process.env.DB_COLLECTION_LIKE as string,
   portServer: process.env.PORT_SERVER as string,
   secretAccessToken: process.env.JWT_SECRET_ACCESS_TOKEN as string,
   secretRefreshToken: process.env.JWT_SECRET_REFRESH_TOKEN as string,
