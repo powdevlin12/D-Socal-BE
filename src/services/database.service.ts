@@ -1,9 +1,13 @@
-import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb'
 import dotenv from 'dotenv'
-import User from '~/models/schemas/User.schema'
-import { RefreshToken } from '~/models/schemas/RefershToken.schema'
-import Follower from '~/models/schemas/Follower.schema'
+import { Collection, Db, MongoClient } from 'mongodb'
 import { envConfig } from '~/constants/config'
+import { BookmarkSchema } from '~/models/schemas/Bookmark.schema'
+import Follower from '~/models/schemas/Follower.schema'
+import { HashTags } from '~/models/schemas/HashTags.schema'
+import { LikeSchema } from '~/models/schemas/Like.schema'
+import { RefreshToken } from '~/models/schemas/RefershToken.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
+import User from '~/models/schemas/User.schema'
 dotenv.config()
 
 const uri = `mongodb+srv://${envConfig.dbUsername}:${envConfig.dbPassword}@cluster0.s9ypdsa.mongodb.net/${envConfig.dbName}?retryWrites=true&w=majority`
@@ -67,15 +71,31 @@ export default class DatabaseConnect {
   }
 
   get users(): Collection<User> {
-    return this.db.collection(envConfig.collectionUsers as string)
+    return this.db.collection(envConfig.collectionUsers)
+  }
+
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(envConfig.collectionTweets)
   }
 
   get refreshTokens(): Collection<RefreshToken> {
-    return this.db.collection(envConfig.collectionRefreshTokens as string)
+    return this.db.collection(envConfig.collectionRefreshTokens)
   }
 
   get followers(): Collection<Follower> {
-    return this.db.collection(envConfig.collectionFollower as string)
+    return this.db.collection(envConfig.collectionFollower)
+  }
+
+  get hashTags(): Collection<HashTags> {
+    return this.db.collection(envConfig.collectionHashTags)
+  }
+
+  get bookmarks(): Collection<BookmarkSchema> {
+    return this.db.collection(envConfig.collectionBookmarks)
+  }
+
+  get likes(): Collection<LikeSchema> {
+    return this.db.collection(envConfig.collectionLikes)
   }
 
   static getInstance() {

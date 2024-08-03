@@ -15,6 +15,10 @@ import YAML from 'yaml'
 import fs from 'fs'
 import path from 'path'
 import swaggerUI from 'swagger-ui-express'
+import tweetRouter from './routes/tweets.router'
+import { hashTagsRoute } from './routes/hashtags.router'
+import { bookmarkRoute } from './routes/bookmarks.route'
+import { likesRoute } from './routes/like.route'
 
 const file = fs.readFileSync(path.resolve('doc-api.yaml'), 'utf-8')
 const swaggerDocument = YAML.parse(file)
@@ -44,6 +48,10 @@ app.use(limiter)
 app.use('/users', userRouter)
 app.use('/medias', mediasRouter)
 app.use('/statics', staticsRouter)
+app.use('/tweets', tweetRouter)
+app.use('/hash-tags', hashTagsRoute)
+app.use('/bookmarks', bookmarkRoute)
+app.use('/likes', likesRoute)
 app.use('/statics/video', express.static(UPLOAD_VIDEO_FOLDER))
 // database
 // run().catch(console.dir)
