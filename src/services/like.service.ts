@@ -1,5 +1,6 @@
 import { LikeSchema, TLikeBody } from '~/models/schemas/Like.schema'
 import { instanceDatabase } from './database.service'
+import { ObjectId } from 'mongodb'
 
 class LikeService {
   public async createUserLikeTweet(user_id: string, body: Omit<TLikeBody, 'user_id'>) {
@@ -10,6 +11,13 @@ class LikeService {
       _id: result.insertedId
     })
     return like
+  }
+
+  public async unlike(like_id: string) {
+    const result = await instanceDatabase().likes.findOneAndDelete({
+      _id: new ObjectId(like_id)
+    })
+    return result
   }
 }
 

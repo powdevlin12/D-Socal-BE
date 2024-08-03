@@ -13,6 +13,13 @@ class BookmarkControllerClass {
 
     return res.status(HTTP_STATUS.CREATED).json(result)
   }
+
+  public async unBookmark(req: Request<ParamsDictionary, any, Pick<TBookmarkRequire, '_id'>>, res: Response) {
+    const { _id } = req.body
+
+    const bookmarkDelete = await bookmarkService.unBookmark(_id ?? '')
+    return res.status(HTTP_STATUS.CREATED).json(bookmarkDelete)
+  }
 }
 
 const bookmarkController = new BookmarkControllerClass()

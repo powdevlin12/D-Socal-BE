@@ -13,3 +13,5 @@ bookmarkRoute.post(
   validate(createBookmarkValidator),
   wrapRequestHandler(bookmarkController.createBookmark)
 )
+
+bookmarkRoute.delete('/', validate(accessTokenValidator), wrapRequestHandler(bookmarkController.unBookmark))

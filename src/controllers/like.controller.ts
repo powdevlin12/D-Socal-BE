@@ -14,6 +14,13 @@ class LikeController {
     })
     return res.status(HTTP_STATUS.CREATED).json(response)
   }
+
+  public async unlike(req: Request<ParamsDictionary, any, Pick<TLikeBody, '_id'>>, res: Response) {
+    const { _id } = req.body
+
+    const likeDelete = await likeService.unlike(_id ?? '')
+    return res.status(HTTP_STATUS.CREATED).json(likeDelete)
+  }
 }
 
 const likeCollection = new LikeController()

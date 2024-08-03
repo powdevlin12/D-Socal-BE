@@ -1,5 +1,6 @@
-import { BookmarkSchema, TBookmarkRequire } from '~/models/schemas/Bookmark.schema'
+import { BookmarkSchema } from '~/models/schemas/Bookmark.schema'
 import { instanceDatabase } from './database.service'
+import { ObjectId } from 'mongodb'
 
 class BookmarkService {
   public createBookmark = async (userId: string, tweet_id: string) => {
@@ -13,6 +14,13 @@ class BookmarkService {
       _id: result.insertedId
     })
     return newBookmark
+  }
+
+  public async unBookmark(bookmark_id: string) {
+    const result = await instanceDatabase().bookmarks.findOneAndDelete({
+      _id: new ObjectId(bookmark_id)
+    })
+    return result
   }
 }
 

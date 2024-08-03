@@ -195,6 +195,33 @@ paths:
                 $ref: '#/components/schemas/Bookmark'
         '422':
           description: Invalid input
+    delete:
+      tags:
+        - Bookmarks
+      security:
+        - BearerAuth: []
+      summary: Huỷ bookmark
+      operationId: delete bookmark
+      requestBody:
+        description: Huỷ bookmark
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: '66adeb3e856daea6adb98bdc'
+        required: true
+      responses:
+        '200':
+          description: Tạo bookmark thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+        '422':
+          description: Invalid input
 
   /likes:
     post:
@@ -214,6 +241,33 @@ paths:
       responses:
         '200':
           description: Tạo like thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '422':
+          description: Invalid input
+    delete:
+      tags:
+        - Likes
+      security:
+        - BearerAuth: []
+      summary: Bỏ likes
+      operationId: delete likes
+      requestBody:
+        description: Bỏ likes
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: '66adeb3e856daea6adb98bdc'
+        required: true
+      responses:
+        '200':
+          description: Bỏ like thành công
           content:
             application/json:
               schema:
