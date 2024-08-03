@@ -12,7 +12,14 @@ class LikeController {
     const response = await likeService.createUserLikeTweet(user_id, {
       tweet_id
     })
-    return res.status(HTTP_STATUS.CREATED).json({ response })
+    return res.status(HTTP_STATUS.CREATED).json(response)
+  }
+
+  public async unlike(req: Request<ParamsDictionary, any, Pick<TLikeBody, '_id'>>, res: Response) {
+    const { _id } = req.body
+
+    const likeDelete = await likeService.unlike(_id ?? '')
+    return res.status(HTTP_STATUS.CREATED).json(likeDelete)
   }
 }
 
