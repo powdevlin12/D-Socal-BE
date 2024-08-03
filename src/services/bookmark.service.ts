@@ -2,15 +2,11 @@ import { BookmarkSchema, TBookmarkRequire } from '~/models/schemas/Bookmark.sche
 import { instanceDatabase } from './database.service'
 
 class BookmarkService {
-  public createBookmark = async (userId: string, body: TBookmarkRequire) => {
-    const { tweet_id, _id, create_at } = body
-    console.log('🚀 ~ BookmarkService ~ createBookmark= ~ tweet_id:', tweet_id)
+  public createBookmark = async (userId: string, tweet_id: string) => {
     const result = await instanceDatabase().bookmarks.insertOne(
       new BookmarkSchema({
         tweet_id,
-        user_id: userId,
-        _id,
-        create_at
+        user_id: userId
       })
     )
     const newBookmark = instanceDatabase().bookmarks.findOne({

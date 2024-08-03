@@ -25,6 +25,8 @@ tags:
     description: ref to Tweets
   - name: Hashtags
     description: ref to Hashtags
+  - name: Bookmarks
+    description: ref to bookmarks
 
 paths:
   /users/login:
@@ -166,6 +168,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessAuthentication'
+        '422':
+          description: Invalid input
+
+  /bookmarks:
+    post:
+      tags:
+        - Bookmarks
+      security:
+        - BearerAuth: []
+      summary: Tạo bookmark
+      operationId: create bookmark
+      requestBody:
+        description: Tạo bookmark
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookmarkBody'
+        required: true
+      responses:
+        '200':
+          description: Tạo bookmark thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+        '422':
+          description: Invalid input
+
+  /likes:
+    post:
+      tags:
+        - Likes
+      security:
+        - BearerAuth: []
+      summary: Tạo likes
+      operationId: create likes
+      requestBody:
+        description: Tạo likes
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLikeBody'
+        required: true
+      responses:
+        '200':
+          description: Tạo like thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
         '422':
           description: Invalid input
 
@@ -319,10 +371,10 @@ components:
       properties:
         type:
           type: number
-          example: 1
+          example: 0
         audience:
           type: number
-          example: 2
+          example: 0
         content:
           type: string
           example: Thu Dat van vo song toan
@@ -334,7 +386,49 @@ components:
           example: ['dat', 'thu', 'tran']
         mentions:
           type: array
-          example: ['objectID', 'objectID', 'objectID']
+          example: []
+    Bookmark:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: '66aa638fcdb3c8cac017dc56'
+        user_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
+        tweet_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
+        created_at:
+          type: string
+          example: '2024-07-31T16:17:19.694+00:00'
+    Like:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: '66aa638fcdb3c8cac017dc56'
+        user_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
+        tweet_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
+        created_at:
+          type: string
+          example: '2024-07-31T16:17:19.694+00:00'
+    CreateBookmarkBody:
+      type: object
+      properties:
+        tweet_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
+    CreateLikeBody:
+      type: object
+      properties:
+        tweet_id:
+          type: string
+          example: '66890be2605b09784de46ed1'
   securitySchemes:
     BearerAuth:
       type: http

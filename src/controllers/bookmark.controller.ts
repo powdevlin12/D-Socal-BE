@@ -6,9 +6,10 @@ import { TokenPayload } from '~/models/schemas/requests/User.request'
 import bookmarkService from '~/services/bookmark.service'
 
 class BookmarkControllerClass {
-  public async createBookmark(req: Request<ParamsDictionary, any, TBookmarkRequire>, res: Response) {
+  public async createBookmark(req: Request<ParamsDictionary, any, Pick<TBookmarkRequire, 'tweet_id'>>, res: Response) {
     const { user_id } = req.decoded_authorization as TokenPayload
-    const result = await bookmarkService.createBookmark(user_id, req.body)
+    const { tweet_id } = req.body
+    const result = await bookmarkService.createBookmark(user_id, tweet_id)
 
     return res.status(HTTP_STATUS.CREATED).json(result)
   }

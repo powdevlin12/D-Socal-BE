@@ -12,7 +12,7 @@ class LikeController {
     const response = await likeService.createUserLikeTweet(user_id, {
       tweet_id
     })
-    return res.status(HTTP_STATUS.CREATED).json({ response })
+    return res.status(HTTP_STATUS.CREATED).json(response)
   }
 }
 

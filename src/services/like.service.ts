@@ -6,7 +6,10 @@ class LikeService {
     const { tweet_id } = body
     const result = await instanceDatabase().likes.insertOne(new LikeSchema({ tweet_id, user_id }))
 
-    return result
+    const like = await instanceDatabase().likes.findOne({
+      _id: result.insertedId
+    })
+    return like
   }
 }
 
