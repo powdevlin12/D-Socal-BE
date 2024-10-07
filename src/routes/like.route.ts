@@ -13,3 +13,5 @@ likesRoute.post(
   validate(createLikeValidator),
   wrapRequestHandler(likeCollection.createUserLikeTweet)
 )
+
+likesRoute.delete('/', validate(accessTokenValidator), wrapRequestHandler(likeCollection.unlike))

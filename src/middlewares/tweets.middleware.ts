@@ -41,9 +41,9 @@ export const createTweetsValidator = checkSchema({
           throw Error(TWEET_MESSAGE.CONTENT_MUST_BE_EMPTY)
         } else if (
           [TweetType.QuoteTweet, TweetType.Comment, TweetType.Tweet].includes(type) &&
-          !isEmpty(mentions) &&
-          !isEmpty(hashTags) &&
-          !isEmpty(value)
+          isEmpty(mentions) &&
+          isEmpty(hashTags) &&
+          isEmpty(value)
         ) {
           throw Error(TWEET_MESSAGE.CONTENT_IS_NOT_EMPTY)
         }
