@@ -12,7 +12,7 @@ interface UserTypes {
   email_verify_token?: string
   forgot_password_token?: string
   verify?: UserVerifyStatus
-
+  twiter_cicler?: string[] // ** audience là twitter cicle thì những id ở trong twitter circle này mới được coi bài đăng
   bio?: string
   location?: string
   website?: string
@@ -32,7 +32,7 @@ export default class User {
   email_verify_token: string
   forgot_password_token: string
   verify: UserVerifyStatus
-
+  twiter_cicler: string[]
   bio: string
   location: string
   website: string
@@ -58,5 +58,6 @@ export default class User {
       (this.username = user.username ?? user.email ?? ''),
       (this.avatar = user.avatar ?? ''),
       (this.cover_photo = user.cover_photo ?? '')
+    this.twiter_cicler = user?.twiter_cicler ?? []
   }
 }
