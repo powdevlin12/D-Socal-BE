@@ -9,9 +9,14 @@ class BookmarkControllerClass {
   public async createBookmark(req: Request<ParamsDictionary, any, TBookmarkRequire>, res: Response) {
     const { user_id } = req.decoded_authorization as TokenPayload
     const result = await bookmarkService.createBookmark(user_id, req.body)
-
     return res.status(HTTP_STATUS.CREATED).json(result)
   }
+
+  // public async unBookmark(req: Request<ParamsDictionary, any, Omit<TBookmarkRequire, "user_id">>, res: Response) {
+  //   const { user_id } = req.decoded_authorization as TokenPayload
+  //   const {tweet_id} = req.body
+    
+  // }
 }
 
 const bookmarkController = new BookmarkControllerClass()

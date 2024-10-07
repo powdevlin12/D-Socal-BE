@@ -3,7 +3,7 @@ import argv from 'minimist'
 
 const options = argv(process.argv.slice(2))
 
-type TEnvironment = 'production' | 'staging' | 'development'
+export type TEnvironment = 'production' | 'staging' | 'development'
 
 const envVariable = {
   production: '.env.production',

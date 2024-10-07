@@ -18,6 +18,10 @@ class BookmarkService {
     })
     return newBookmark
   }
+
+  // public async unBookmark() {
+    
+  // }
 }
 
 const bookmarkService = new BookmarkService()
