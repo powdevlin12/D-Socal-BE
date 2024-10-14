@@ -11,7 +11,7 @@ export interface HabitsBodyType {
   user_id: string
 }
 
-export class Habits {
+export class HabitsSchema {
   _id: ObjectId
   habit_name: string
   user_id: ObjectId
