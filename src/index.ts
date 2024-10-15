@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { UPLOAD_VIDEO_FOLDER } from './constants/dir'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
@@ -53,6 +53,23 @@ app.use('/hash-tags', hashTagsRoute)
 app.use('/bookmarks', bookmarkRoute)
 app.use('/likes', likesRoute)
 app.use('/statics/video', express.static(UPLOAD_VIDEO_FOLDER))
+
+// ** handle error middleware (tất cả các route đều chạy vô đây)
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const error: any = new Error('Not Found')
+  error.status = 404
+  next(error)
+})
+
+// ** đây là 1 middleware để bắt lỗi trong toàn bộ app
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  const statusCode = error.status || 500
+  return res.status(statusCode).json({
+    status: 'error',
+    code: statusCode,
+    message: error.message || 'Internal Server Error'
+  })
+})
 // database
 // run().catch(console.dir)
 instanceDatabase()

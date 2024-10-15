@@ -587,3 +587,15 @@ export const changePasswordValidator = checkSchema({
   new_password: passwordSchema,
   confirm_new_password: confirmPasswordSchema('new_password')
 })
+
+export const isUserLoginInVallidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // ** req.header là header chung người dùng gửi lên gì thì nhận được cái đó, nó không phân biệt chữ hoa chữ thường
+    // ** req.headers là lấy ra của thằng express thì sẽ phân biệt các field của nó có chữ hoa chữ thường
+    if (req.headers.authorization) {
+      middleware(req, res, next)
+    }
+
+    next()
+  }
+}

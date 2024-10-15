@@ -9,6 +9,7 @@ import { RefreshToken } from '~/models/schemas/RefershToken.schema'
 import Tweet from '~/models/schemas/Tweet.schema'
 import User from '~/models/schemas/User.schema'
 import argv from 'minimist'
+import { HabitsSchema } from '~/models/schemas/Habit.schema'
 
 dotenv.config()
 
@@ -85,7 +86,8 @@ export default class DatabaseConnect {
         envConfig.collectionLikes,
         envConfig.collectionRefreshTokens,
         envConfig.collectionTweets,
-        envConfig.collectionUsers
+        envConfig.collectionUsers,
+        envConfig.collectionHabits
       ]
       await this.checkAndCreateDB()
       await this.createCollections(requiredCollections)
@@ -159,6 +161,10 @@ export default class DatabaseConnect {
 
   get likes(): Collection<LikeSchema> {
     return this.db.collection(envConfig.collectionLikes)
+  }
+
+  get habits(): Collection<HabitsSchema> {
+    return this.db.collection(envConfig.collectionHabits)
   }
 
   static getInstance() {
