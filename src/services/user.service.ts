@@ -147,7 +147,7 @@ class UserService {
       iat: decode_refresh_token.iat,
       exp: decode_refresh_token.exp
     })
-    return token
+    return { accessToken: token[0], refershToken: token[1] }
   }
 
   async refreshToken({ refreshToken, user_id, verify, exp }: IRefreshTokenParameter) {

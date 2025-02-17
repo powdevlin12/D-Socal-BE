@@ -1,7 +1,12 @@
+import { config } from 'dotenv'
 import { NextFunction, Request, Response } from 'express'
-import User from '~/models/schemas/User.schema'
-import userService from '~/services/user.service'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { ObjectId } from 'mongodb'
+import { envConfig } from '~/constants/config'
+import { UserVerifyStatus } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { USER_MESSAGE } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
 import {
   ChangePasswordReqBody,
   FollowReqBody,
@@ -12,26 +17,21 @@ import {
   RegisterRequestBody,
   ResetPasswordBody,
   TokenPayload,
-  UnfollowReqParams,
   UpdateMeReqBody,
   VerifyForgotPasswordBody
 } from '~/models/schemas/requests/User.request'
-import { USER_MESSAGE } from '~/constants/messages'
-import HTTP_STATUS from '~/constants/httpStatus'
+import User from '~/models/schemas/User.schema'
 import { instanceDatabase } from '~/services/database.service'
-import { ErrorWithStatus } from '~/models/Errors'
-import { ObjectId } from 'mongodb'
-import { UserVerifyStatus } from '~/constants/enums'
-import { config } from 'dotenv'
-import { envConfig } from '~/constants/config'
+import userService from '~/services/user.service'
 config()
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
+
   const token = await userService.login(user._id.toString(), user.verify)
   return res.status(200).json({
     message: USER_MESSAGE.LOGIN_SUCCESS,
-    token
+    data: token
   })
 }
 

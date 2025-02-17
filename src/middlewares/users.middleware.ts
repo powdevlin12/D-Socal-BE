@@ -164,11 +164,12 @@ export const loginValidator = checkSchema(
       custom: {
         options: async (value: string, { req }) => {
           const user = await instanceDatabase().users.findOne({
-            email: value,
+            email: (req.body.email as string).toLowerCase(),
             password: hashPassword(req.body.password)
           })
           if (!user) throw new Error(USER_MESSAGE.EMAIL_OR_PASSWORD_INCORRECT)
           req.user = user
+
           return true
         }
       }
