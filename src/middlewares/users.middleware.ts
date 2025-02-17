@@ -226,22 +226,19 @@ export const registerValidator = checkSchema(
       custom: {
         options: async (value: string) => {
           const result = await userService.checkExistEmail(value)
-          if (result) throw new Error(USER_MESSAGE.EMAIL_IS_ALREADY_IN_USE)
+          if (result)
+            throw new ErrorWithStatus({
+              message: USER_MESSAGE.EMAIL_IS_ALREADY_IN_USE,
+              status: HTTP_STATUS.BAD_REQUEST
+            })
+
           return true
         }
       }
     },
     password: passwordSchema,
     confirm_password: confirmPasswordSchema('password'),
-    date_of_birth: {
-      isISO8601: {
-        options: {
-          strict: true,
-          strictSeparator: true
-        },
-        errorMessage: USER_MESSAGE.DATE_OF_BIRTH_MUST_BE_IOS8601
-      }
-    }
+    date_of_birth: {}
   },
   ['body']
 )

@@ -13,6 +13,8 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
     const errorsObject = errors.mapped()
     const entityError = new EntityError({ errors: {} })
 
+    console.dir(errors)
+
     if (errors.isEmpty()) {
       return next()
     }

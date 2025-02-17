@@ -44,7 +44,7 @@ export const registerController = async (
   if (result) {
     return res.status(200).json({
       message: USER_MESSAGE.REGISTERE_SUCCESS,
-      result
+      data: { accessToken: result[0], refreshToken: result[1] }
     })
   }
 }
