@@ -17,6 +17,13 @@ config({
 
 export const envConfig = {
   host: process.env.HOST as string,
+  // MySQL Configuration
+  mysqlHost: process.env.MYSQL_HOST as string,
+  mysqlPort: parseInt(process.env.MYSQL_PORT as string) || 3306,
+  mysqlUsername: process.env.MYSQL_USERNAME as string,
+  mysqlPassword: process.env.MYSQL_PASSWORD as string,
+  mysqlDatabase: process.env.MYSQL_DATABASE as string,
+  // MongoDB Configuration (old)
   dbUsername: process.env.DB_USERNAME as string,
   dbPassword: process.env.DB_PASSWORD as string,
   dbName: process.env.DB_DATABASE as string,

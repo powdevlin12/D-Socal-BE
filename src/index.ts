@@ -5,11 +5,13 @@ import mediasRouter from './routes/medias.router'
 import staticsRouter from './routes/static.router'
 import userRouter from './routes/users.router'
 import { instanceDatabase } from './services/database.service'
+import mysqlService from './services/mysql.service'
 import { initFolder } from './utils/file'
 import { envConfig } from './constants/config'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import cors from 'cors'
+import companyRouter from './routes/company.route'
 
 import YAML from 'yaml'
 import fs from 'fs'
@@ -52,6 +54,7 @@ app.use('/tweets', tweetRouter)
 app.use('/hash-tags', hashTagsRoute)
 app.use('/bookmarks', bookmarkRoute)
 app.use('/likes', likesRoute)
+app.use('/company', companyRouter)
 app.use('/statics/video', express.static(UPLOAD_VIDEO_FOLDER))
 
 // ** handle error middleware (tất cả các route đều chạy vô đây)
@@ -70,9 +73,13 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     message: error.message || 'Internal Server Error'
   })
 })
-// database
+// database connections
+// MongoDB (old)
 // run().catch(console.dir)
 instanceDatabase()
+
+// MySQL (new)
+mysqlService.connect().catch(console.error)
 // default handlers
 app.use(defaultErrorHandler)
 
