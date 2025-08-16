@@ -86,7 +86,7 @@ export const handleUploadVideo = async (req: Request) => {
         const indexDotLast = (originalFilename as string).lastIndexOf('.')
         const ext = (originalFilename as string).substring(indexDotLast + 1)
 
-        files.video[0].newFilename = `${date}.${ext}` ?? ''
+        files.video[0].newFilename = `${date}.${ext}`
         resolve(files.video[0] as File)
       }
     })

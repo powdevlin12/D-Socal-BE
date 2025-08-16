@@ -67,16 +67,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // ** đây là 1 middleware để bắt lỗi trong toàn bộ app
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   const statusCode = error.status || 500
-  return res.status(statusCode).json({
-    status: 'error',
-    code: statusCode,
-    message: error.message || 'Internal Server Error'
-  })
+  return res
+    .status(statusCode)
+    .json({ status: 'error', code: statusCode, message: error.message || 'Internal Server Error' })
 })
-// database connections
-// MongoDB (old)
-// run().catch(console.dir)
-instanceDatabase()
 
 // MySQL (new)
 mysqlService.connect().catch(console.error)

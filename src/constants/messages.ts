@@ -12,7 +12,7 @@ export const USER_MESSAGE = {
   DATE_OF_BIRTH_MUST_BE_IOS8601: 'Date of birth must be IO8601',
   USER_NOT_FOUND: 'User not found',
   LOGIN_SUCCESS: 'Login success',
-  REGISTERE_SUCCESS: 'Register success',
+  REGISTERE_SUCCESS: 'Đăng ký tài khoản thành công',
   EMAIL_OR_PASSWORD_INCORRECT: 'Email or password incorrect',
   ACCCESS_TOKEN_IS_REQUESTED: 'Access token is requested',
   ACCESS_TOKEN_INVALID: 'Access token is invalid',
@@ -57,9 +57,7 @@ export const USER_MESSAGE = {
   REFRESH_TOKEN_SUCCESSFULLY: 'refresh token successfully'
 } as const
 
-export const MEDIA_MESSAGE = {
-  UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully'
-} as const
+export const MEDIA_MESSAGE = { UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully' } as const
 
 export const TWEET_MESSAGE = {
   TYPE_TWEET_IS_INVALID: 'Type tweet is invalid',

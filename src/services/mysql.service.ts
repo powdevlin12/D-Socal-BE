@@ -53,6 +53,28 @@ export class MySQLService {
       console.log('🔄 Creating database tables...')
 
       await this.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id VARCHAR(100) PRIMARY KEY,
+          name VARCHAR(255),
+          email VARCHAR(100),
+          password VARCHAR(100),
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+      `)
+
+      await this.query(`
+        CREATE TABLE IF NOT EXISTS refresh_tokens (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          user_id VARCHAR(100),
+          token VARCHAR(255),
+          iat DATETIME,
+          exp DATETIME,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `)
+
+      await this.query(`
         CREATE TABLE IF NOT EXISTS company_info (
           id INT AUTO_INCREMENT PRIMARY KEY,
           name VARCHAR(255),

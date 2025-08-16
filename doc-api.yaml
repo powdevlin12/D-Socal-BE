@@ -10,8 +10,6 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.11
 servers:
-  - url: http://localhost:1230
-    description: 'API staging'
   - url: http://localhost:1236
     description: 'API dev'
   - url: https://petstore3.swagger.io/api/v3
@@ -394,16 +392,11 @@ components:
         confirm_password:
           type: string
           example: '!Thudat123'
-        date_of_birth:
-          type: string
-          format: date
-          example: '2000-01-01'
       required:
         - name
         - email
         - password
         - confirm_password
-        - date_of_birth
     VerifyEmail:
       type: object
       properties:

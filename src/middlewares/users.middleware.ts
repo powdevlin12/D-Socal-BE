@@ -17,21 +17,9 @@ import { envConfig } from '~/constants/config'
 const passwordSchema: ParamSchema = {
   notEmpty: true,
   isString: true,
-  isLength: {
-    options: {
-      min: 8,
-      max: 50
-    },
-    errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50
-  },
+  isLength: { options: { min: 8, max: 50 }, errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50 },
   isStrongPassword: {
-    options: {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minSymbols: 1,
-      minNumbers: 1
-    },
+    options: { minLength: 8, minLowercase: 1, minUppercase: 1, minSymbols: 1, minNumbers: 1 },
     errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG
   }
 }
@@ -39,21 +27,8 @@ const passwordSchema: ParamSchema = {
 const confirmPasswordSchema = (key: string): ParamSchema => ({
   notEmpty: true,
   isString: true,
-  isLength: {
-    options: {
-      min: 8,
-      max: 50
-    }
-  },
-  isStrongPassword: {
-    options: {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minSymbols: 1,
-      minNumbers: 1
-    }
-  },
+  isLength: { options: { min: 8, max: 50 } },
+  isStrongPassword: { options: { minLength: 8, minLowercase: 1, minUppercase: 1, minSymbols: 1, minNumbers: 1 } },
   custom: {
     options: (value, { req }) => {
       if (value !== req.body[key]) {
@@ -64,76 +39,65 @@ const confirmPasswordSchema = (key: string): ParamSchema => ({
   }
 })
 
-const forgotPasswordTokenSchema: ParamSchema = {
-  custom: {
-    options: async (value, { req }) => {
-      if (!value) {
-        throw new ErrorWithStatus({
-          message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
-          status: HTTP_STATUS.UNAUTHORIZED
-        })
-      }
-      try {
-        const decoded_forgot_password_token = await verifyToken({
-          token: value,
-          privateKey: envConfig.secretForgotPasswordVerifyToken
-        })
+// const forgotPasswordTokenSchema: ParamSchema = {
+//   custom: {
+//     options: async (value, { req }) => {
+//       if (!value) {
+//         throw new ErrorWithStatus({
+//           message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+//           status: HTTP_STATUS.UNAUTHORIZED
+//         })
+//       }
+//       try {
+//         const decoded_forgot_password_token = await verifyToken({
+//           token: value,
+//           privateKey: envConfig.secretForgotPasswordVerifyToken
+//         })
 
-        const { user_id } = decoded_forgot_password_token
+//         const { user_id } = decoded_forgot_password_token
 
-        const user = await instanceDatabase().users.findOne({
-          _id: new ObjectId(user_id)
-        })
+//         const user = await instanceDatabase().users.findOne({
+//           _id: new ObjectId(user_id)
+//         })
 
-        if (!user) {
-          throw new ErrorWithStatus({
-            message: USER_MESSAGE.USER_NOT_FOUND,
-            status: HTTP_STATUS.UNAUTHORIZED
-          })
-        }
+//         if (!user) {
+//           throw new ErrorWithStatus({
+//             message: USER_MESSAGE.USER_NOT_FOUND,
+//             status: HTTP_STATUS.UNAUTHORIZED
+//           })
+//         }
 
-        if (user.forgot_password_token !== value) {
-          throw new ErrorWithStatus({
-            message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_INVALID,
-            status: HTTP_STATUS.UNAUTHORIZED
-          })
-        }
+//         if (user.forgot_password_token !== value) {
+//           throw new ErrorWithStatus({
+//             message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_INVALID,
+//             status: HTTP_STATUS.UNAUTHORIZED
+//           })
+//         }
 
-        req.decoded_forgot_password_token = decoded_forgot_password_token
-        return true
-      } catch (error) {
-        if (error instanceof JsonWebTokenError) {
-          throw new ErrorWithStatus({
-            message: USER_MESSAGE.EMAIL_TOKEN_INVALID,
-            status: HTTP_STATUS.UNAUTHORIZED
-          })
-        }
-        throw error
-      }
-    }
-  }
-}
+//         req.decoded_forgot_password_token = decoded_forgot_password_token
+//         return true
+//       } catch (error) {
+//         if (error instanceof JsonWebTokenError) {
+//           throw new ErrorWithStatus({
+//             message: USER_MESSAGE.EMAIL_TOKEN_INVALID,
+//             status: HTTP_STATUS.UNAUTHORIZED
+//           })
+//         }
+//         throw error
+//       }
+//     }
+//   }
+// }
 
 const nameSchema: ParamSchema = {
-  notEmpty: {
-    errorMessage: USER_MESSAGE.NAME_IS_REQUESTED
-  },
-  isLength: {
-    options: {
-      max: 100,
-      min: 5
-    },
-    errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
-  },
+  notEmpty: { errorMessage: USER_MESSAGE.NAME_IS_REQUESTED },
+  isLength: { options: { max: 100, min: 5 }, errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100 },
   isString: true
 }
 
 const dateOfBirthSchema: ParamSchema = {
   isISO8601: {
-    options: {
-      strict: true,
-      strictSeparator: true
-    },
+    options: { strict: true, strictSeparator: true },
     errorMessage: USER_MESSAGE.DATE_OF_BIRTH_MUST_BE_IOS8601
   }
 }
@@ -142,10 +106,7 @@ const imageSchema: ParamSchema = {
   optional: true,
   isString: true,
   isLength: {
-    options: {
-      max: 200,
-      min: 0
-    },
+    options: { max: 200, min: 0 },
     errorMessage: USER_MESSAGE.PHOTO_MUST_BE_BETWEEN_10_AND_100_CHARACTERS_LONG
   },
   trim: true
@@ -154,13 +115,9 @@ const imageSchema: ParamSchema = {
 export const loginValidator = checkSchema(
   {
     email: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY
-      },
+      notEmpty: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY },
       trim: true,
-      isEmail: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID
-      },
+      isEmail: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID },
       custom: {
         options: async (value: string, { req }) => {
           const user = await instanceDatabase().users.findOne({
@@ -177,21 +134,9 @@ export const loginValidator = checkSchema(
     password: {
       notEmpty: true,
       isString: true,
-      isLength: {
-        options: {
-          min: 8,
-          max: 50
-        },
-        errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50
-      },
+      isLength: { options: { min: 8, max: 50 }, errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_FROM_8_TO_50 },
       isStrongPassword: {
-        options: {
-          minLength: 8,
-          minLowercase: 1,
-          minUppercase: 1,
-          minSymbols: 1,
-          minNumbers: 1
-        },
+        options: { minLength: 8, minLowercase: 1, minUppercase: 1, minSymbols: 1, minNumbers: 1 },
         errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG
       }
     }
@@ -202,27 +147,15 @@ export const loginValidator = checkSchema(
 export const registerValidator = checkSchema(
   {
     name: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.NAME_IS_REQUESTED
-      },
-      isLength: {
-        options: {
-          max: 100,
-          min: 5
-        },
-        errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100
-      },
+      notEmpty: { errorMessage: USER_MESSAGE.NAME_IS_REQUESTED },
+      isLength: { options: { max: 100, min: 5 }, errorMessage: USER_MESSAGE.NAME_LENGTH_MUST_BE_FROM_5_TO_100 },
       isString: true,
       trim: true
     },
     email: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY
-      },
+      notEmpty: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY },
       trim: true,
-      isEmail: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID
-      },
+      isEmail: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID },
       custom: {
         options: async (value: string) => {
           const result = await userService.checkExistEmail(value)
@@ -237,8 +170,7 @@ export const registerValidator = checkSchema(
       }
     },
     password: passwordSchema,
-    confirm_password: confirmPasswordSchema('password'),
-    date_of_birth: {}
+    confirm_password: confirmPasswordSchema('password')
   },
   ['body']
 )
@@ -265,10 +197,7 @@ export const accessTokenValidator = checkSchema(
             return true
           } catch (error) {
             if (error instanceof JsonWebTokenError) {
-              throw new ErrorWithStatus({
-                message: error.message,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
+              throw new ErrorWithStatus({ message: error.message, status: HTTP_STATUS.UNAUTHORIZED })
             }
             throw error
           }
@@ -293,9 +222,7 @@ export const refreshTokenValidator = checkSchema(
             }
             const [decoded_refresh_token, refresh_token] = await Promise.all([
               verifyToken({ token: value, privateKey: envConfig.secretRefreshToken as string }),
-              instanceDatabase().refreshTokens.findOne({
-                token: value
-              })
+              instanceDatabase().refreshTokens.findOne({ token: value })
             ])
 
             if (!refresh_token) {
@@ -343,10 +270,7 @@ export const emailVerifyTokenValidator = checkSchema(
             return true
           } catch (error) {
             if (error instanceof JsonWebTokenError) {
-              throw new ErrorWithStatus({
-                message: USER_MESSAGE.EMAIL_TOKEN_INVALID,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
+              throw new ErrorWithStatus({ message: USER_MESSAGE.EMAIL_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
             }
             throw error
           }
@@ -360,23 +284,14 @@ export const emailVerifyTokenValidator = checkSchema(
 export const forgotPasswordValidate = checkSchema(
   {
     email: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY
-      },
-      isEmail: {
-        errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID
-      },
+      notEmpty: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_EMPTY },
+      isEmail: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID },
       custom: {
         options: async (value, { req }) => {
-          const user = await instanceDatabase().users.findOne({
-            email: value
-          })
+          const user = await instanceDatabase().users.findOne({ email: value })
 
           if (!user) {
-            throw new ErrorWithStatus({
-              message: USER_MESSAGE.USER_NOT_FOUND,
-              status: HTTP_STATUS.NOT_FOUND
-            })
+            throw new ErrorWithStatus({ message: USER_MESSAGE.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
           }
 
           ;(req as Request).user = user
@@ -388,29 +303,19 @@ export const forgotPasswordValidate = checkSchema(
   ['body']
 )
 
-export const verifyForgotPasswordValidate = checkSchema(
-  {
-    forgot_password_token: forgotPasswordTokenSchema
-  },
-  ['body']
-)
+// export const verifyForgotPasswordValidate = checkSchema({ forgot_password_token: forgotPasswordTokenSchema }, ['body'])
 
 export const resetPasswordValidator = checkSchema({
   password: passwordSchema,
-  confirm_password: confirmPasswordSchema('password'),
-  forgot_password_token: forgotPasswordTokenSchema
+  confirm_password: confirmPasswordSchema('password')
+  // forgot_password_token: forgotPasswordTokenSchema
 })
 
 export const verifiedUserMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const { verify } = req.decoded_authorization as TokenPayload
 
   if (verify !== UserVerifyStatus.Verified) {
-    return next(
-      new ErrorWithStatus({
-        message: USER_MESSAGE.YOU_RE_NOT_FORBIDDEN,
-        status: HTTP_STATUS.FORBIDDEN
-      })
-    )
+    return next(new ErrorWithStatus({ message: USER_MESSAGE.YOU_RE_NOT_FORBIDDEN, status: HTTP_STATUS.FORBIDDEN }))
   }
 
   next()
@@ -418,71 +323,44 @@ export const verifiedUserMiddleware = (req: Request, res: Response, next: NextFu
 
 export const updateMeValidator = checkSchema(
   {
-    name: {
-      ...nameSchema,
-      notEmpty: undefined,
-      optional: true
-    },
-    date_of_birth: {
-      ...dateOfBirthSchema,
-      optional: true,
-      notEmpty: undefined
-    },
+    name: { ...nameSchema, notEmpty: undefined, optional: true },
+    date_of_birth: { ...dateOfBirthSchema, optional: true, notEmpty: undefined },
     avatar: imageSchema,
     cover_photo: imageSchema,
     bio: {
       optional: true,
-      isString: {
-        errorMessage: USER_MESSAGE.BIO_MUST_BE_STRING
-      },
+      isString: { errorMessage: USER_MESSAGE.BIO_MUST_BE_STRING },
       isLength: {
-        options: {
-          min: 10,
-          max: 200
-        },
+        options: { min: 10, max: 200 },
         errorMessage: USER_MESSAGE.BIO_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
       }
     },
     website: {
       optional: true,
-      isString: {
-        errorMessage: USER_MESSAGE.WEBSITE_MUST_BE_STRING
-      },
+      isString: { errorMessage: USER_MESSAGE.WEBSITE_MUST_BE_STRING },
       isLength: {
-        options: {
-          min: 10,
-          max: 200
-        },
+        options: { min: 10, max: 200 },
         errorMessage: USER_MESSAGE.WEBSITE_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
       }
     },
     location: {
       optional: true,
-      isString: {
-        errorMessage: USER_MESSAGE.LOCATION_MUST_BE_STRING
-      },
+      isString: { errorMessage: USER_MESSAGE.LOCATION_MUST_BE_STRING },
       isLength: {
-        options: {
-          min: 10,
-          max: 200
-        },
+        options: { min: 10, max: 200 },
         errorMessage: USER_MESSAGE.LOCATION_MUST_BE_BETWEEN_10_AND_200_CHARACTERS_LONG
       }
     },
     username: {
       optional: true,
-      isString: {
-        errorMessage: USER_MESSAGE.USERNAME_MUST_BE_STRING
-      },
+      isString: { errorMessage: USER_MESSAGE.USERNAME_MUST_BE_STRING },
       custom: {
         options: async (value: string, { req }) => {
           if (!REGEX_USERNAME.test(value)) {
             throw new Error(USER_MESSAGE.USER_NAME_IS_NOT_VALID)
           }
 
-          const user = await instanceDatabase().users.findOne({
-            username: value as string
-          })
+          const user = await instanceDatabase().users.findOne({ username: value as string })
 
           if (user) {
             throw Error(USER_MESSAGE.USERNAME_IS_EXIST)
@@ -498,12 +376,8 @@ export const updateMeValidator = checkSchema(
 
 export const followValidator = checkSchema({
   followed_user_id: {
-    notEmpty: {
-      errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY
-    },
-    isString: {
-      errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING
-    },
+    notEmpty: { errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY },
+    isString: { errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING },
     custom: {
       options: async (value: string, { req }) => {
         if (!ObjectId.isValid(new ObjectId(value))) {
@@ -513,9 +387,7 @@ export const followValidator = checkSchema({
           })
         }
 
-        const follower = await instanceDatabase().followers.findOne({
-          followed_user_id: new ObjectId(value)
-        })
+        const follower = await instanceDatabase().followers.findOne({ followed_user_id: new ObjectId(value) })
 
         if (follower === null) {
           return true
@@ -529,12 +401,8 @@ export const followValidator = checkSchema({
 export const unfollowValidator = checkSchema(
   {
     followed_user_id: {
-      notEmpty: {
-        errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY
-      },
-      isString: {
-        errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING
-      },
+      notEmpty: { errorMessage: USER_MESSAGE.FOLLOWED_USER_ID_NOT_EMPTY },
+      isString: { errorMessage: USER_MESSAGE.FOLLOW_USER_ID_MUST_BE_STRING },
       custom: {
         options: async (value: string, { req }) => {
           const { user_id } = (req as Request).decoded_authorization as TokenPayload
@@ -567,15 +435,10 @@ export const changePasswordValidator = checkSchema({
     custom: {
       options: async (value, { req }) => {
         const { user_id } = (req as Request).decoded_authorization as TokenPayload
-        const user = await instanceDatabase().users.findOne({
-          _id: new ObjectId(user_id)
-        })
+        const user = await instanceDatabase().users.findOne({ _id: new ObjectId(user_id) })
 
         if (user?.password !== hashPassword(value)) {
-          throw new ErrorWithStatus({
-            status: HTTP_STATUS.NOT_FOUND,
-            message: USER_MESSAGE.PASSWORD_IS_NOT_EXACTLY
-          })
+          throw new ErrorWithStatus({ status: HTTP_STATUS.NOT_FOUND, message: USER_MESSAGE.PASSWORD_IS_NOT_EXACTLY })
         }
 
         return true
