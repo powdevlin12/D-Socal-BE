@@ -1,6 +1,6 @@
 import express from 'express'
-import { loginController, registerController } from '~/controllers/users.controller'
-import { loginValidator, registerValidator } from '~/middlewares/users.middleware'
+import { getMeController, loginController, registerController } from '~/controllers/users.controller'
+import { accessTokenValidator, loginValidator, registerValidator } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
 import { wrapRequestHandler } from '../utils/handlers'
 import { filterBody } from '~/middlewares/common.middleware'
@@ -10,6 +10,7 @@ const userRouter = express.Router()
 userRouter
   .post('/login', validate(loginValidator), wrapRequestHandler(loginController))
   .post('/register', validate(registerValidator), wrapRequestHandler(registerController))
+  .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
 // .post(
 //   '/logout',
 //   validate(accessTokenValidator),
@@ -26,7 +27,6 @@ userRouter
 // )
 // .post('/reset-password', validate(resetPasswordValidator), wrapRequestHandler(resetPasswordController))
 // .post('/refresh-token', validate(refreshTokenValidator), wrapRequestHandler(refreshTokenController))
-// .get('/get-me', validate(accessTokenValidator), wrapRequestHandler(getMeController))
 // .patch(
 //   '/me',
 //   validate(accessTokenValidator),

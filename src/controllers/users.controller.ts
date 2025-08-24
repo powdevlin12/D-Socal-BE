@@ -141,15 +141,14 @@ export const registerController = async (
 //   return res.json(result)
 // }
 
-// export const getMeController = async (req: Request, res: Response, next: NextFunction) => {
-//   const { user_id } = req.decoded_authorization as TokenPayload
-//   const user = await userService.getMe(user_id)
-
-//   return res.json({
-//     message: USER_MESSAGE.GET_ME_SUCCESS,
-//     user
-//   })
-// }
+export const getMeController = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const user = await userService.getMe(user_id)
+  return res.json({
+    message: USER_MESSAGE.GET_ME_SUCCESS,
+    data: user
+  })
+}
 
 // export const updateMeController = async (
 //   req: Request<ParamsDictionary, any, UpdateMeReqBody>,

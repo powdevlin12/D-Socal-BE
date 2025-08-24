@@ -196,12 +196,15 @@ class UserService {
   }
 
   async getMe(user_id: string) {
-    const user = await instanceDatabase().users.findOne(
-      { _id: new ObjectId(user_id) },
-      { projection: { password: 0, email_verify_token: 0, forgot_password_token: 0 } }
-    )
+    const getUserByIdQuery = `
+        SELECT * 
+        FROM users 
+        WHERE id = ?
+        LIMIT 1
+    `
+    const result = await mysqlService.query(getUserByIdQuery, [user_id])
 
-    return user
+    return result[0]
   }
 
   async updateMe(user_id: string, payload: UpdateMeReqBody) {
