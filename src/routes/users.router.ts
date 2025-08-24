@@ -1,6 +1,6 @@
 import express from 'express'
-import { registerController } from '~/controllers/users.controller'
-import { registerValidator } from '~/middlewares/users.middleware'
+import { loginController, registerController } from '~/controllers/users.controller'
+import { loginValidator, registerValidator } from '~/middlewares/users.middleware'
 import { validate } from '../utils/validation'
 import { wrapRequestHandler } from '../utils/handlers'
 import { filterBody } from '~/middlewares/common.middleware'
@@ -8,7 +8,7 @@ import { UpdateMeReqBody } from '~/models/schemas/requests/User.request'
 const userRouter = express.Router()
 
 userRouter
-  // .post('/login', validate(loginValidator), wrapRequestHandler(loginController))
+  .post('/login', validate(loginValidator), wrapRequestHandler(loginController))
   .post('/register', validate(registerValidator), wrapRequestHandler(registerController))
 // .post(
 //   '/logout',

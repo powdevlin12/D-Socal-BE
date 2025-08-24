@@ -13,6 +13,7 @@ import { verifyToken } from '~/utils/jwt'
 import { TokenPayload } from '../models/schemas/requests/User.request'
 import { REGEX_USERNAME } from '~/constants/regex'
 import { envConfig } from '~/constants/config'
+import mysqlService from '~/services/mysql.service'
 
 const passwordSchema: ParamSchema = {
   notEmpty: true,
@@ -120,13 +121,18 @@ export const loginValidator = checkSchema(
       isEmail: { errorMessage: USER_MESSAGE.EMAIL_IS_NOT_VALID },
       custom: {
         options: async (value: string, { req }) => {
-          const user = await instanceDatabase().users.findOne({
-            email: (req.body.email as string).toLowerCase(),
-            password: hashPassword(req.body.password)
-          })
+          const selectUserQuery = `
+              SELECT *
+              FROM users 
+              WHERE email = ? AND password = ?
+              LIMIT 1
+          `
+
+          const result = await mysqlService.query(selectUserQuery, [req.body.email, hashPassword(req.body.password)])
+          const user = result[0]
           if (!user) throw new Error(USER_MESSAGE.EMAIL_OR_PASSWORD_INCORRECT)
           req.user = user
-
+          console.dir({ user })
           return true
         }
       }

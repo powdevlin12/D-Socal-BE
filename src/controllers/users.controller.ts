@@ -25,15 +25,15 @@ import { instanceDatabase } from '~/services/database.service'
 import userService from '~/services/user.service'
 config()
 
-// export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
-//   const user = req.user as User
+export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
+  const user = req.user as User
 
-//   const token = await userService.login(user._id.toString(), user.verify)
-//   return res.status(200).json({
-//     message: USER_MESSAGE.LOGIN_SUCCESS,
-//     data: token
-//   })
-// }
+  const token = await userService.login(user.id)
+  return res.status(200).json({
+    message: USER_MESSAGE.LOGIN_SUCCESS,
+    data: token
+  })
+}
 
 export const registerController = async (
   req: Request<ParamsDictionary, any, RegisterRequestBody>,
