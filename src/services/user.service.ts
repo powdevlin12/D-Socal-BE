@@ -107,12 +107,12 @@ class UserService {
     const token = await this.signAccessAndRefreshToken({ user_id: user_id.toString(), verify: 1 })
     const decode_refresh_token = await refreshTokenService.decodeRefreshToken(token.refreshToken)
 
-    // await refreshTokenService.createRefeshToken({
-    //   user_id: new ObjectId(user_id),
-    //   token: token[1],
-    //   iat: decode_refresh_token.iat,
-    //   exp: decode_refresh_token.exp
-    // })
+    await refreshTokenService.createRefeshToken({
+      user_id: user_id,
+      token: token.refreshToken,
+      iat: decode_refresh_token.iat,
+      exp: decode_refresh_token.exp
+    })
     return { accessToken: token.accessToken, refreshToken: token.refreshToken }
   }
 
