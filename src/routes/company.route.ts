@@ -8,7 +8,10 @@ companyRouter.get('/info', companyController.getCompanyInfo)
 
 // Cập nhật thông tin công ty
 companyRouter.put('/info', companyController.updateCompanyInfo)
-
+// Cập nhật ảnh logo công ty
+companyRouter.put('/info/logo', companyController.updateCompanyLogo)
+// Cập nhật ảnh giới thiệu
+companyRouter.put('/info/img-intro', companyController.updateCompanyImgIntro)
 // Lấy thông tin liên hệ
 companyRouter.get('/contact', companyController.getContactInfo)
 

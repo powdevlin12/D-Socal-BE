@@ -25,6 +25,8 @@ tags:
     description: ref to Hashtags
   - name: Bookmarks
     description: ref to bookmarks
+  - name: Company
+    description: Company information and services
 
 paths:
   /users/login:
@@ -273,6 +275,200 @@ paths:
         '422':
           description: Invalid input
 
+  /company/info:
+    get:
+      tags:
+        - Company
+      summary: Lấy thông tin công ty
+      description: Lấy thông tin chi tiết về công ty
+      operationId: getCompanyInfo
+      responses:
+        '200':
+          description: Lấy thông tin công ty thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyInfoResponse'
+        '404':
+          description: Không tìm thấy thông tin công ty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Lỗi server
+    put:
+      tags:
+        - Company
+      summary: Cập nhật thông tin công ty
+      description: Cập nhật thông tin chi tiết về công ty
+      operationId: updateCompanyInfo
+      requestBody:
+        description: Thông tin công ty cần cập nhật
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCompanyInfoBody'
+        required: true
+      responses:
+        '200':
+          description: Cập nhật thông tin công ty thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Lỗi server
+
+  /company/info/logo:
+    put:
+      tags:
+        - Company
+      summary: Cập nhật logo công ty
+      description: Upload và cập nhật logo công ty
+      operationId: updateCompanyLogo
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: File ảnh logo
+      responses:
+        '200':
+          description: Upload logo thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadImageResponse'
+        '500':
+          description: Lỗi server
+  /company/info/img-intro:
+    put:
+      tags:
+        - Company
+      summary: Cập nhật hình ảnh giới thiệu công ty
+      description: Upload và cập nhật hình ảnh giới thiệu công ty
+      operationId: updateCompanyImgIntro
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: File ảnh giới thiệu
+      responses:
+        '200':
+          description: Upload hình ảnh giới thiệu thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadImageResponse'
+        '500':
+          description: Lỗi server
+  /company/contact:
+    get:
+      tags:
+        - Company
+      summary: Lấy thông tin liên hệ
+      description: Lấy thông tin liên hệ của công ty
+      operationId: getContactInfo
+      responses:
+        '200':
+          description: Lấy thông tin liên hệ thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactInfoResponse'
+        '500':
+          description: Lỗi server
+
+  /company/contact/customer:
+    post:
+      tags:
+        - Company
+      summary: Lưu thông tin liên hệ từ khách hàng
+      description: Lưu thông tin liên hệ do khách hàng gửi
+      operationId: saveCustomerContact
+      requestBody:
+        description: Thông tin liên hệ từ khách hàng
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerContactBody'
+        required: true
+      responses:
+        '201':
+          description: Lưu thông tin liên hệ thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Lỗi server
+
+  /company/services:
+    get:
+      tags:
+        - Company
+      summary: Lấy danh sách dịch vụ
+      description: Lấy danh sách tất cả dịch vụ của công ty
+      operationId: getServices
+      responses:
+        '200':
+          description: Lấy danh sách dịch vụ thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicesResponse'
+        '500':
+          description: Lỗi server
+    post:
+      tags:
+        - Company
+      summary: Tạo dịch vụ mới
+      description: Thêm dịch vụ mới cho công ty
+      operationId: createService
+      requestBody:
+        description: Thông tin dịch vụ mới
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServiceBody'
+        required: true
+      responses:
+        '201':
+          description: Tạo dịch vụ mới thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateServiceResponse'
+        '500':
+          description: Lỗi server
+
+  /company/footer-links:
+    get:
+      tags:
+        - Company
+      summary: Lấy footer links
+      description: Lấy danh sách các liên kết footer
+      operationId: getFooterLinks
+      responses:
+        '200':
+          description: Lấy footer links thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FooterLinksResponse'
+        '500':
+          description: Lỗi server
+
   /hash-tags:
     post:
       tags:
@@ -476,6 +672,249 @@ components:
         tweet_id:
           type: string
           example: '66890be2605b09784de46ed1'
+
+    # Company schemas
+    CompanyInfoResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Lấy thông tin công ty thành công'
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: 'Jetwash Company'
+            logo_url:
+              type: string
+              example: 'https://example.com/logo.png'
+            intro_text:
+              type: string
+              example: 'Công ty chuyên về dịch vụ rửa xe'
+            address:
+              type: string
+              example: '123 Đường ABC, Quận 1, TP.HCM'
+            tax_code:
+              type: string
+              example: '0123456789'
+            email:
+              type: string
+              example: 'contact@jetwash.com'
+            welcome_content:
+              type: string
+              example: 'Chào mừng đến với Jetwash'
+            img_intro:
+              type: string
+              example: 'https://example.com/intro.jpg'
+
+    UpdateCompanyInfoBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Jetwash Company'
+        logo_url:
+          type: string
+          example: 'https://example.com/logo.png'
+        intro_text:
+          type: string
+          example: 'Công ty chuyên về dịch vụ rửa xe'
+        address:
+          type: string
+          example: '123 Đường ABC, Quận 1, TP.HCM'
+        tax_code:
+          type: string
+          example: '0123456789'
+        email:
+          type: string
+          example: 'contact@jetwash.com'
+        welcome_content:
+          type: string
+          example: 'Chào mừng đến với Jetwash'
+        img_intro:
+          type: string
+          example: 'https://example.com/intro.jpg'
+
+    ContactInfoResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Lấy thông tin liên hệ thành công'
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            phone:
+              type: string
+              example: '0123456789'
+            email:
+              type: string
+              example: 'contact@jetwash.com'
+            address:
+              type: string
+              example: '123 Đường ABC, Quận 1, TP.HCM'
+            facebook:
+              type: string
+              example: 'https://facebook.com/jetwash'
+            instagram:
+              type: string
+              example: 'https://instagram.com/jetwash'
+
+    CustomerContactBody:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: 'Nguyễn Văn A'
+        phone_customer:
+          type: string
+          example: '0987654321'
+        message:
+          type: string
+          example: 'Tôi muốn biết thêm về dịch vụ rửa xe'
+      required:
+        - full_name
+        - phone_customer
+        - message
+
+    ServicesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Lấy danh sách dịch vụ thành công'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              title:
+                type: string
+                example: 'Rửa xe ô tô'
+              description:
+                type: string
+                example: 'Dịch vụ rửa xe ô tô chuyên nghiệp'
+              image_url:
+                type: string
+                example: 'https://example.com/service1.jpg'
+              company_id:
+                type: integer
+                example: 1
+              created_at:
+                type: string
+                format: date-time
+                example: '2024-08-31T10:00:00Z'
+
+    CreateServiceBody:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Rửa xe ô tô'
+        description:
+          type: string
+          example: 'Dịch vụ rửa xe ô tô chuyên nghiệp'
+        image_url:
+          type: string
+          example: 'https://example.com/service1.jpg'
+        company_id:
+          type: integer
+          example: 1
+      required:
+        - title
+        - description
+
+    CreateServiceResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Tạo dịch vụ mới thành công'
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+
+    FooterLinksResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Lấy footer links thành công'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              title:
+                type: string
+                example: 'Về chúng tôi'
+              url:
+                type: string
+                example: '/about'
+              column_position:
+                type: integer
+                example: 1
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Thao tác thành công'
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: 'Có lỗi xảy ra'
+
+    UploadImageResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          example: 'https://example.com/uploaded-image.jpg'
+        message:
+          type: string
+          example: 'Upload hình ảnh thành công'
   securitySchemes:
     BearerAuth:
       type: http
