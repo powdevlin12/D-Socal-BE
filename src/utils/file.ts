@@ -24,8 +24,8 @@ export const handleUploadImage = async (req: Request) => {
     uploadDir: UPLOAD_IMG_TEMP_FOLDER,
     maxFiles: 4,
     keepExtensions: true,
-    maxFileSize: 300 * 1024,
-    maxTotalFileSize: 300 * 1024 * 4,
+    maxFileSize: 5000 * 1024,
+    maxTotalFileSize: 5000 * 1024 * 4,
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'image' && Boolean(mimetype?.includes('image/'))
       if (!valid) {
@@ -88,6 +88,120 @@ export const handleUploadVideo = async (req: Request) => {
 
         files.video[0].newFilename = `${date}.${ext}`
         resolve(files.video[0] as File)
+      }
+    })
+  })
+}
+
+export const handleUploadLogo = async (req: Request) => {
+  console.log('handleUploadLogo called - request headers:', req.headers);
+  
+  const form = formidable({
+    uploadDir: UPLOAD_IMG_TEMP_FOLDER,
+    maxFiles: 1,
+    keepExtensions: true,
+    maxFileSize: 5000 * 1024,
+    // Không kiểm tra tên trường, chỉ kiểm tra mimetype
+    filter: function ({ name, originalFilename, mimetype }) {
+      console.log('Logo upload filter - name:', name, 'originalFilename:', originalFilename, 'mimetype:', mimetype)
+      const valid = Boolean(mimetype?.includes('image/'))
+      if (!valid) {
+        console.log('Logo upload validation failed:', { name, mimetype })
+        form.emit('error' as any, new Error('File type is not valid') as any)
+      }
+      return valid
+    }
+  })
+
+  return new Promise<File[]>((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      console.log('Logo upload parse result:', JSON.stringify({ 
+        err: err?.message || null, 
+        fields: Object.keys(fields), 
+        files: Object.keys(files),
+        fileDetails: Object.entries(files).map(([key, value]) => ({
+          key,
+          filename: Array.isArray(value) ? value[0]?.originalFilename : null
+        }))
+      }, null, 2))
+      
+      if (err) {
+        reject(err)
+        return
+      }
+
+      if (isEmpty(files)) {
+        reject(new Error('No files uploaded'))
+        return
+      }
+
+      // Lấy file đầu tiên nếu có
+      const fileEntries = Object.entries(files)
+      if (fileEntries.length > 0) {
+        const [firstKey, firstValue] = fileEntries[0]
+        console.log(`Using first file field: ${firstKey}`)
+        resolve(firstValue as unknown as File[])
+      } else {
+        console.log('No file fields found in the request')
+        reject(new Error('No file fields found in the request'))
+      }
+    })
+  })
+}
+
+export const handleUploadImgIntro = async (req: Request) => {
+  console.log('handleUploadImgIntro called - request headers:', req.headers)
+  
+  const form = formidable({
+    uploadDir: UPLOAD_IMG_TEMP_FOLDER,
+    maxFiles: 1,
+    keepExtensions: true,
+    maxFileSize: 5000 * 1024,
+    // Không kiểm tra tên trường, chỉ kiểm tra mimetype
+    filter: function ({ name, originalFilename, mimetype }) {
+      console.log('ImgIntro upload filter - name:', name, 'originalFilename:', originalFilename, 'mimetype:', mimetype)
+      const valid = Boolean(mimetype?.includes('image/'))
+      if (!valid) {
+        console.log('ImgIntro upload validation failed:', { name, mimetype })
+        form.emit('error' as any, new Error('File type is not valid') as any)
+      }
+      return valid
+    }
+  })
+
+  return new Promise<File[]>((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      console.log('ImgIntro upload parse result:', 
+        JSON.stringify({ 
+          err: err?.message || null, 
+          fields: Object.keys(fields),
+          files: Object.keys(files),
+          fileDetails: Object.entries(files).map(([key, value]) => ({
+            key,
+            filename: Array.isArray(value) ? value[0]?.originalFilename : null
+          }))
+        }, null, 2)
+      )
+      
+      if (err) {
+        reject(err)
+        return
+      }
+
+      if (isEmpty(files)) {
+        reject(new Error('No files uploaded'))
+        return
+      }
+
+      // Lấy file đầu tiên nếu có
+      const fileEntries = Object.entries(files)
+      if (fileEntries.length > 0) {
+        const [firstKey, firstValue] = fileEntries[0]
+        console.log(`Using first file field: ${firstKey}`)
+        resolve(firstValue as unknown as File[])
+      } else {
+        console.log('No file fields found in the request')
+        reject(new Error('No file fields found in the request'))
       }
     })
   })
